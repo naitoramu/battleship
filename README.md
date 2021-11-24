@@ -1,2 +1,2 @@
 # battleship
-Classic Battleship game built in Java FX
+Classic Battleship game built in Java FX. JD
