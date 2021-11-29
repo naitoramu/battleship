@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.csv.CSVRecord;
@@ -14,16 +13,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import model.CSVDictReader;
 import model.CustomButton;
+import model.MenuVBox;
 
 public class MainMenuController {
 
     @FXML
     private VBox menuVBox;
-    private VBox mainMenuVBox;
-    private VBox selectDifficultyLevelMenuVBox;
-    private VBox changeLangMenuVBox;
-
-    private CustomButton[] mainMenuButtons;
+    private MenuVBox mainMenuVBox;
+    private MenuVBox changeLangMenuVBox;
+    private MenuVBox logOrSignMenuVBox;
 
     private String rootPath;
     private String LANG;
@@ -35,7 +33,6 @@ public class MainMenuController {
         rootPath = System.getProperty("user.dir");
         LANG = "EN";
         mainMenuButtonsCount = 8;
-        mainMenuButtons = new CustomButton[mainMenuButtonsCount];
     }
 
     @FXML
@@ -44,6 +41,7 @@ public class MainMenuController {
         initializeButtonEventHandler();
         initializeMainMenu();
         initializeChangeLangMenu();
+        initializeLogOrSignInMenu();
         switchMenuVBox(mainMenuVBox);
     }
 
@@ -68,6 +66,21 @@ public class MainMenuController {
         };
     }
 
+    private void initializeMainMenu(){
+        mainMenuVBox = new MenuVBox(buttonLabelsDict);
+        mainMenuVBox.initializeMenuButtons(mainMenuButtonsCount, buttonEventHandler, 0);
+    }
+
+    private void initializeChangeLangMenu(){
+        changeLangMenuVBox = new MenuVBox(buttonLabelsDict);
+        changeLangMenuVBox.initializeSelectLangButtons(buttonEventHandler);
+    }
+
+    private void initializeLogOrSignInMenu(){
+        logOrSignMenuVBox = new MenuVBox(buttonLabelsDict);
+        logOrSignMenuVBox.initializeMenuButtons(2, buttonEventHandler, 8);
+    }
+
     private void handleButton(CustomButton btn){
 
         int buttonID = btn.getButtonID();
@@ -77,6 +90,10 @@ public class MainMenuController {
             case 5:
             switchMenuVBox(changeLangMenuVBox);
             System.out.println("Menu VBox has been changed");
+            break;
+
+            case 6:
+            switchMenuVBox(logOrSignMenuVBox);
             break;
 
             case 7:
@@ -95,16 +112,10 @@ public class MainMenuController {
         }
     }
 
-    private void initializeMainMenu(){
-        mainMenuVBox = new VBox();
-        initializeMainMenuButtons();
-    }
-
     private void switchMenuVBox(VBox VBox){
         VBox newVBox = new VBox(VBox);
         menuVBox.getChildren().clear();
         menuVBox.getChildren().addAll(newVBox.getChildren());
-        menuVBox.setAlignment(Pos.CENTER);
     }
 
     private void switchLanguage(String lang){
@@ -113,39 +124,12 @@ public class MainMenuController {
     }
 
     private void changeButtonsLang(){
-        for(CustomButton btn : mainMenuButtons){
+        for(CustomButton btn : mainMenuVBox.getMenuButtons()){
             btn.setText(buttonLabelsDict.get(btn.getButtonID()).get(LANG));
         }
-    }
 
-    private void initializeMainMenuButtons(){
-        CustomButton newButton;
-        for(int i=0; i < mainMenuButtonsCount; i++){
-            newButton = new CustomButton(i);
-            newButton.setText(buttonLabelsDict.get(i).get(LANG));
-            newButton.setPrefSize(200, 50);
-            newButton.addEventHandler(MouseEvent.MOUSE_CLICKED, buttonEventHandler);
-            mainMenuButtons[i] = newButton;
-            mainMenuVBox.getChildren().add(mainMenuButtons[i]);
-        }
-    }
-
-    private void initializeChangeLangMenu(){
-        changeLangMenuVBox = new VBox();
-        List<String> availableLangsList = buttonLabelsDict.get(0).getParser().getHeaderNames();
-        ArrayList<String> availableLangsArrayList = new ArrayList<String>(availableLangsList);
-        availableLangsArrayList.remove(0);                                  //Usuwanie komórki "ButtonID"
-        int availableLangsCount = availableLangsArrayList.size();
-
-        CustomButton selectLangButton[] = new CustomButton[availableLangsCount];
-        CustomButton newCustomButton;
-        for(int i=0; i < availableLangsCount; i++){
-            newCustomButton = new CustomButton(99);                         //id=99 zarezerwowane dla buttonow do zmiany jezyka
-            newCustomButton.setText(availableLangsArrayList.get(i));
-            newCustomButton.setPrefSize(200, 50);
-            newCustomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, buttonEventHandler);
-            selectLangButton[i] = newCustomButton;
-            changeLangMenuVBox.getChildren().add(selectLangButton[i]);
+        for(CustomButton btn : logOrSignMenuVBox.getMenuButtons()){
+            btn.setText(buttonLabelsDict.get(btn.getButtonID()).get(LANG));
         }
     }
 
