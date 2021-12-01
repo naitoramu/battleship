@@ -8,9 +8,13 @@ import org.apache.commons.csv.CSVRecord;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import model.CSVDictReader;
 import model.CustomButton;
 import model.MenuVBox;
@@ -61,7 +65,12 @@ public class MainMenuController {
             @Override
             public void handle(MouseEvent event) {
                 CustomButton btn = (CustomButton) event.getSource();
-                handleButton(btn);
+                try {
+                    handleButton(btn);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         };
     }
@@ -81,11 +90,14 @@ public class MainMenuController {
         logOrSignMenuVBox.initializeMenuButtons(2, buttonEventHandler, 8);
     }
 
-    private void handleButton(CustomButton btn){
+    private void handleButton(CustomButton btn) throws IOException{
 
         int buttonID = btn.getButtonID();
 
         switch(buttonID){
+
+            case 0:
+            startGame(btn);
 
             case 5:
             switchMenuVBox(changeLangMenuVBox);
@@ -110,6 +122,14 @@ public class MainMenuController {
             System.out.println("You pressed button nr. " + buttonID);
             break;
         }
+    }
+
+    private void startGame(CustomButton btn) throws IOException{
+        Parent newRoot = FXMLLoader.load(getClass().getResource("/view/gameView.fxml"));
+        Scene scene = new Scene(newRoot);
+        Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
+        scene.getStylesheets().add(getClass().getResource("/view/stylesheet/game.css").toExternalForm());
+        stageTheButtonBelongs.setScene(scene);
     }
 
     private void switchMenuVBox(VBox VBox){
