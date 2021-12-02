@@ -5,19 +5,18 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVRecord;
 
+import classes.CSVDictReader;
+import classes.CustomButton;
+import classes.MenuVBox;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import model.CSVDictReader;
-import model.CustomButton;
-import model.MenuVBox;
 
 public class MainMenuController {
 

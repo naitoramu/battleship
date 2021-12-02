@@ -1,4 +1,4 @@
-package model;
+package classes;
 
 import java.io.FileReader;
 import java.io.IOException;

@@ -8,9 +8,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import  javafx.scene.shape.Rectangle;
-import model.SupremeRectangle;
 
 import java.util.ArrayList;
+
+import classes.SupremeRectangle;
 
 public class GameController {
     @FXML
