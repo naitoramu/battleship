@@ -1,4 +1,4 @@
-package classes;
+package battleship.classes;
 
 import javafx.scene.control.Button;
 

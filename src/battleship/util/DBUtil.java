@@ -1,4 +1,4 @@
-package util;
+package battleship.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,8 +9,8 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
-import model.User;
-import model.Statistics;
+import battleship.model.User;
+import battleship.model.Statistics;
 
 public class DBUtil {
 

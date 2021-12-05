@@ -1,4 +1,4 @@
-package model;
+package battleship.model;
 
 public class Statistics {
 

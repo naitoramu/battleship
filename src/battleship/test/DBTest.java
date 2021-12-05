@@ -1,10 +1,10 @@
-package test;
+package battleship.test;
 
 import java.util.List;
 
-import model.User;
-import model.Statistics;
-import util.DBUtil;
+import battleship.model.User;
+import battleship.model.Statistics;
+import battleship.util.DBUtil;
 
 public class DBTest {
 

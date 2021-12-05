@@ -1,4 +1,4 @@
-package controller;
+package battleship.controller;
 
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -11,7 +11,7 @@ import  javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 
-import classes.SupremeRectangle;
+import battleship.classes.SupremeRectangle;
 
 public class GameController {
     @FXML
