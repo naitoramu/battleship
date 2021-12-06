@@ -1,12 +1,22 @@
 CustomButton {
-    -fx-background-color: rgb(136, 136, 136);
+    -fx-background-color: black;
+    -fx-text-fill: white;
 }
 
 CustomButton:hover {
-    -fx-background-color: rgb(226, 226, 226);
+    -fx-background-color: rgb(88, 241, 255);
+    -fx-text-fill: black;
 }
 
 #menuVBox {
-    -fx-background-color:rgb(161, 161, 161);
-    -fx-text-align:center;
+    -fx-background-color: rgb(70, 94, 98);
+}
+
+MenuVBox {
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+}
+
+CustomTextField {
+    -fx-max-width: 600;
 }

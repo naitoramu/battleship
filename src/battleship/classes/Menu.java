@@ -1,6 +1,7 @@
 package battleship.classes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.csv.CSVRecord;
@@ -18,10 +19,10 @@ public class Menu {
     private List<CSVRecord> buttonLabelsList;
     private List<CSVRecord> textFieldPromptLabelsList;
     private EventHandler<MouseEvent> buttonEventHandler;
-    private RegularMenuVBox mainMenuVBox;
-    private SpecialMenuVBox changeLangMenuVBox;
-    private RegularMenuVBox logInOrRegisterMenuVBox;
-    private SpecialMenuVBox registerMenuVBox;
+    private MenuVBox mainMenuVBox;
+    private MenuVBox changeLangMenuVBox;
+    private MenuVBox logInOrRegisterMenuVBox;
+    private MenuVBox registerMenuVBox;
     
 
 
@@ -38,24 +39,29 @@ public class Menu {
     }
 
     private void initializeMainMenu(){
-        mainMenuVBox = new RegularMenuVBox(buttonLabelsList);
-        mainMenuVBox.initializeButtons(mainMenuButtonsCount, buttonEventHandler, buttonIterator);
+        mainMenuVBox = new MenuVBox(buttonLabelsList, textFieldPromptLabelsList);
+        for(int i = 0; i < 8; i++){
+            mainMenuVBox.addButton(i, buttonEventHandler);
+        }
+
     }
 
     private void initializeChangeLangMenu(){
-        changeLangMenuVBox = new SpecialMenuVBox(buttonLabelsList, textFieldPromptLabelsList);
-        changeLangMenuVBox.initializeSelectLangButtons(buttonEventHandler);
+        changeLangMenuVBox = new MenuVBox(buttonLabelsList, textFieldPromptLabelsList);
+        changeLangMenuVBox.addSelectLangButtons(buttonEventHandler);
     }
 
     private void initializeLogInOrRegisterMenu(){
-        logInOrRegisterMenuVBox = new RegularMenuVBox(buttonLabelsList);
-        logInOrRegisterMenuVBox.initializeButtons(2, buttonEventHandler, 8);
+        logInOrRegisterMenuVBox = new MenuVBox(buttonLabelsList, textFieldPromptLabelsList);
+        logInOrRegisterMenuVBox.addButton(8, buttonEventHandler);
+        logInOrRegisterMenuVBox.addButton(9, buttonEventHandler);
     }
 
     private void initializeRegisterMenu(){
-        registerMenuVBox = new SpecialMenuVBox(buttonLabelsList, textFieldPromptLabelsList);
-        registerMenuVBox.initializeTextFields(2, 0);
-        registerMenuVBox.initializeButtons(1, buttonEventHandler, 10);
+        registerMenuVBox = new MenuVBox(buttonLabelsList, textFieldPromptLabelsList);
+        registerMenuVBox.addTextField(0);
+        registerMenuVBox.addTextField(1);
+        registerMenuVBox.addButton(10, buttonEventHandler);
     }
 
     private void loadButtonLabels() throws IOException{

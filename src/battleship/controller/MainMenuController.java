@@ -1,9 +1,7 @@
 package battleship.controller;
 
 import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.csv.CSVRecord;
+import java.security.NoSuchAlgorithmException;
 
 import battleship.Main;
 import battleship.classes.CustomButton;
@@ -46,7 +44,7 @@ public class MainMenuController {
                 CustomButton btn = (CustomButton) event.getSource();
                 try {
                     handleButton(btn);
-                } catch (IOException e) {
+                } catch (IOException | NoSuchAlgorithmException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -59,7 +57,7 @@ public class MainMenuController {
         switchMenuVBox(menu.getMainMenuVBox());
     }
 
-    private void handleButton(CustomButton btn) throws IOException{
+    private void handleButton(CustomButton btn) throws IOException, NoSuchAlgorithmException{
 
         int buttonID = btn.getButtonID();
 
@@ -86,7 +84,7 @@ public class MainMenuController {
             break;
 
             case 10:
-            System.out.println(Main.getUsers());
+            menu.getRegisterMenuVBox().registerNewUser();
             break;
 
             case 99:
