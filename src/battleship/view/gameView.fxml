@@ -157,7 +157,7 @@
                   </Text>
                </children>
             </GridPane>
-            <Rectangle fx:id="rectangleFieldB" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="380.0" layoutX="776.0" layoutY="95.0" onMouseClicked="#info" stroke="BLACK" strokeType="INSIDE" width="380.0" />
+            <Rectangle fx:id="rectangleFieldB" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="380.0" layoutX="776.0" layoutY="95.0" stroke="BLACK" strokeType="INSIDE" width="380.0" />
             <GridPane disable="true" layoutX="788.0" layoutY="163.0" prefHeight="300.0" prefWidth="29.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -297,6 +297,7 @@
                   </Text>
                </children>
             </GridPane>
+            <Button fx:id="check" layoutX="294.0" layoutY="519.0" mnemonicParsing="false" onAction="#check" text="check" />
          </children>
       </AnchorPane>
    </children>

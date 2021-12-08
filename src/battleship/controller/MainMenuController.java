@@ -102,10 +102,10 @@ public class MainMenuController {
     }
 
     private void startGame(CustomButton btn) throws IOException{
-        Parent newRoot = FXMLLoader.load(getClass().getResource("/view/gameView.fxml"));
+        Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/gameView.fxml"));
         Scene scene = new Scene(newRoot);
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
-        scene.getStylesheets().add(getClass().getResource("/view/stylesheet/game.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/game.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
     }
 
