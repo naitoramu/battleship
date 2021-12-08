@@ -4,14 +4,13 @@ package battleship.classes;
 import javafx.scene.shape.Rectangle;
 
 
-
 public class Area extends Rectangle {
 
     private int state;
-    private int rid;
+    private final int rid;
     private String ridAsCoor;
-    private int row;
-    private int column;
+    private final int row;
+    private final int column;
 
     public Area(double x, double y, double width, double height, int state, int rid, String ridAsCoor, int row, int column) {
         super(x, y, width, height);
@@ -34,10 +33,6 @@ public class Area extends Rectangle {
         return rid;
     }
 
-    public void setRid(int rid) {
-        this.rid = rid;
-    }
-
     public String getRidAsCoor() {
         return ridAsCoor;
     }
@@ -50,15 +45,8 @@ public class Area extends Rectangle {
         return row;
     }
 
-    public void setRow(int row) {
-        this.row = row;
-    }
-
     public int getColumn() {
         return column;
     }
 
-    public void setColumn(int column) {
-        this.column = column;
-    }
 }
