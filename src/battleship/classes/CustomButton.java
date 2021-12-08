@@ -3,14 +3,18 @@ package battleship.classes;
 import javafx.scene.control.Button;
 
 public class CustomButton extends Button{
-    private int buttonID;
+    private String buttonName;
 
-    public CustomButton(int buttonID){
+    public CustomButton(String buttonName){
         super();
-        this.buttonID = buttonID;
+        this.setButtonName(buttonName);
     }
 
-    public int getButtonID(){
-        return buttonID;
+    public String getButtonName() {
+        return buttonName;
     }
+    public void setButtonName(String buttonName) {
+        this.buttonName = buttonName;
+    }
+
 }

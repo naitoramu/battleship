@@ -1,9 +1,7 @@
 package battleship.controller;
 
 import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.csv.CSVRecord;
+import java.security.NoSuchAlgorithmException;
 
 import battleship.Main;
 import battleship.classes.CustomButton;
@@ -14,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -21,20 +20,25 @@ import javafx.stage.Stage;
 public class MainMenuController {
 
     @FXML
+    private Label titleLabel;
+    @FXML
+    private Label errorLabel;
+    @FXML
     private VBox menuVBox;
     private Menu menu;
 
     private String rootPath;
-    private String LANG;
     private EventHandler<MouseEvent> buttonEventHandler;
 
     public MainMenuController(){
         rootPath = System.getProperty("user.dir");
-        LANG = "EN";
     }
 
     @FXML
     void initialize() throws IOException{
+        titleLabel.setText("BATTLESHIP");
+        errorLabel.setVisible(false);
+        
         initializeButtonEventHandler();
         initializeMenu();
     }
@@ -46,7 +50,7 @@ public class MainMenuController {
                 CustomButton btn = (CustomButton) event.getSource();
                 try {
                     handleButton(btn);
-                } catch (IOException e) {
+                } catch (IOException | NoSuchAlgorithmException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -59,44 +63,69 @@ public class MainMenuController {
         switchMenuVBox(menu.getMainMenuVBox());
     }
 
-    private void handleButton(CustomButton btn) throws IOException{
+    private void handleButton(CustomButton btn) throws IOException, NoSuchAlgorithmException{
 
-        int buttonID = btn.getButtonID();
+        String buttonName = btn.getButtonName();
 
-        switch(buttonID){
+        switch(buttonName){
 
-            case 0:
+            case "pvc":
             startGame(btn);
 
-            case 5:
+            case "change-lang":
             switchMenuVBox(menu.getChangeLangMenuVBox());
             System.out.println("Menu VBox has been changed");
             break;
 
-            case 6:
+            case "log-or-reg":
             switchMenuVBox(menu.getLogOrSignMenuVBox());
             break;
 
-            case 7:
+            case "exit":
             Platform.exit();
             break;
 
-            case 9:
+            case "login":
+            switchMenuVBox(menu.getLogInMenuVBox());
+            break;
+
+            case "registration":
             switchMenuVBox(menu.getRegisterMenuVBox());
             break;
 
-            case 10:
-            System.out.println(Main.getUsers());
+            case "register":
+            boolean registrationSucceeded = menu.getRegisterMenuVBox().registerNewUser();
+            if(registrationSucceeded){
+                switchMenuVBox(menu.getMainMenuVBox());
+                Main.setUserLogedIn(true);
+                menu.refresh();
+                System.out.println("Registration succeeded");
+            }
             break;
 
-            case 99:
+            case "log-in":
+            boolean logInSucceeded = menu.getLogInMenuVBox().logInUser();
+            if(logInSucceeded){
+                switchMenuVBox(menu.getMainMenuVBox());
+                Main.setUserLogedIn(true);
+                menu.refresh();
+                System.out.println("Log in succeeded");
+            }
+            break;
+
+            case "log-out":
+            Main.setUserLogedIn(false);
+            menu.refresh();
+            break;
+
+            case "language":
             switchLanguage(btn.getText());
             switchMenuVBox(menu.getMainMenuVBox());
             System.out.println("Application interface language has been changed");
             break;
 
             default:
-            System.out.println("You pressed button nr. " + buttonID);
+            System.out.println("You pressed button nr. " + buttonName);
             break;
         }
     }
@@ -116,11 +145,7 @@ public class MainMenuController {
     }
 
     private void switchLanguage(String lang){
-        setLANG(lang);
-        menu.changeButtonsLang(lang);
+        menu.changeMenuLang(lang);
     }
 
-    public void setLANG(String lang){
-        LANG = lang;
-    }
 }
