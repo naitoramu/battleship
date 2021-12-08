@@ -17,7 +17,8 @@ public class DBUtil {
     public static final String DRIVER = "org.sqlite.JDBC";
     public static final String DB_URL = "jdbc:sqlite:database.db";
 
-    private Connection connection;
+    private Connection userConnection;
+    private Connection statisticsConnection;
     private Statement usersStatement;
     private Statement statisticsStatement;
 
@@ -30,9 +31,10 @@ public class DBUtil {
         }
 
         try {
-            connection = DriverManager.getConnection(DB_URL);
-            usersStatement = connection.createStatement();
-            statisticsStatement = DriverManager.getConnection(DB_URL).createStatement();
+            userConnection = DriverManager.getConnection(DB_URL);
+            usersStatement = userConnection.createStatement();
+            statisticsConnection = DriverManager.getConnection(DB_URL);
+            statisticsStatement = statisticsConnection.createStatement();
         } catch (SQLException e) {
             System.err.println("Problem z otwarciem polaczenia");
             e.printStackTrace();
@@ -41,8 +43,19 @@ public class DBUtil {
         createTables();
     }
 
+    public void openConnection(){
+        try {
+            userConnection = DriverManager.getConnection(DB_URL);
+            usersStatement = userConnection.createStatement();
+            statisticsStatement = DriverManager.getConnection(DB_URL).createStatement();
+        } catch (SQLException e) {
+            System.err.println("Problem z otwarciem polaczenia");
+            e.printStackTrace();
+        }
+    }
+
     public boolean createTables() {
-        String createUsers = "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, username varchar(255) NOT NULL UNIQUE, password varchar(32) NOT NULL)";
+        String createUsers = "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, username varchar(255) NOT NULL UNIQUE, password varchar(64) NOT NULL)";
         String createStatistics = "CREATE TABLE IF NOT EXISTS statistics (stats_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, number_of_wins INTEGER NOT NULL DEFAULT 0, number_of_losts INTEGER NOT NULL DEFAULT 0, FOREIGN KEY(user_id) REFERENCES users(user_id))";
         String createTrigger = "CREATE TRIGGER IF NOT EXISTS users_insert AFTER INSERT ON users BEGIN INSERT INTO statistics(user_id) VALUES(NEW.user_id); END";
         try {
@@ -59,7 +72,7 @@ public class DBUtil {
 
     public boolean insertUser(String username, String password) {
         try {
-            PreparedStatement prepStmt = connection.prepareStatement(
+            PreparedStatement prepStmt = userConnection.prepareStatement(
                     "insert into users values (NULL, ?, ?);");
             prepStmt.setString(1, username);
             prepStmt.setString(2, password);
@@ -73,22 +86,32 @@ public class DBUtil {
     }
 
     public boolean insertStatistics(int userID) {
+        PreparedStatement prepStmt = null;
         try {
-            PreparedStatement prepStmt = connection.prepareStatement(
+            prepStmt = userConnection.prepareStatement(
                     "insert into ksiazki values (NULL, ?, NULL, NULL);");
             prepStmt.setInt(1, userID);
             prepStmt.execute();
         } catch (SQLException e) {
             System.err.println("Error while insert statistics");
             return false;
+        } finally {
+            if(prepStmt != null) {
+                try {
+                    prepStmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return true;
     }
 
     public List<User> selectUsers() {
         List<User> users = new LinkedList<User>();
+        ResultSet result = null;
         try {
-            ResultSet result = usersStatement.executeQuery("SELECT * FROM users");
+            result = usersStatement.executeQuery("SELECT * FROM users");
             int userID;
             String username, password;
             Statistics statistics;
@@ -103,14 +126,23 @@ public class DBUtil {
             System.err.println("Error while selecting users");
             e.printStackTrace();
             return null;
+        } finally {
+            if(result != null){
+                try {
+                    result.close();    
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return users;
     }
 
     private Statistics selectStatisticsByID(int userID) throws SQLException {
         Statistics statistics;
+        ResultSet result = null;
         try {
-            ResultSet result = statisticsStatement.executeQuery("SELECT * FROM statistics WHERE user_id = " + userID);
+            result = statisticsStatement.executeQuery("SELECT * FROM statistics WHERE user_id = " + userID);
             int numberOfWins, numberOfLosts;
             if (result.next()) {
                 numberOfWins = result.getInt("number_of_wins");
@@ -124,14 +156,23 @@ public class DBUtil {
             System.err.println("Error wile selecting statistics by user_id");
             e.printStackTrace();
             return null;
+        } finally {
+            if(result != null){
+                try {
+                    result.close();    
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return statistics;
     }
 
-    public List<Statistics> selectKsiazki() {
+    public List<Statistics> selectKsiazki() throws SQLException {
         List<Statistics> statistics = new LinkedList<Statistics>();
+        ResultSet result = null;
         try {
-            ResultSet result = usersStatement.executeQuery("SELECT * FROM ksiazki");
+            result = usersStatement.executeQuery("SELECT * FROM ksiazki");
             int userID, numberOfWins, numberOfLosts;
             while (result.next()) {
                 userID = result.getInt("user_id");
@@ -142,13 +183,22 @@ public class DBUtil {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        } finally {
+            if(result != null){
+                try {
+                    result.close();    
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return statistics;
     }
 
     public void closeConnection() {
         try {
-            connection.close();
+            userConnection.close();
+            statisticsConnection.close();
         } catch (SQLException e) {
             System.err.println("Problem z zamknieciem polaczenia");
             e.printStackTrace();

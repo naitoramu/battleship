@@ -1,12 +1,27 @@
 CustomButton {
-    -fx-background-color: rgb(136, 136, 136);
+    -fx-background-color: black;
+    -fx-text-fill: rgb(88, 241, 255);
 }
 
 CustomButton:hover {
-    -fx-background-color: rgb(226, 226, 226);
+    -fx-background-color: rgb(88, 241, 255);
+    -fx-text-fill: black;
 }
 
-#menuVBox {
-    -fx-background-color:rgb(161, 161, 161);
-    -fx-text-align:center;
+StackPane {
+    -fx-background-color: rgb(70, 94, 98);
+}
+
+MenuVBox {
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+}
+
+CustomTextField, CustomPasswordField {
+    -fx-max-width: 400;
+}
+
+#titleLabel {
+    -fx-text-fill: white;
+    -fx-font-size: 64px;
 }
