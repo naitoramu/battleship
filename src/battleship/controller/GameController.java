@@ -2,13 +2,17 @@ package battleship.controller;
 
 import battleship.classes.Area;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import  javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GameController {
     @FXML
@@ -20,38 +24,71 @@ public class GameController {
 
     ArrayList<ArrayList<Area>> arrListRecStorageLeft = new ArrayList<>(10);//pamięć
 
-    ArrayList<Area> row1 = new ArrayList<>(10);
-    ArrayList<Area> row2 = new ArrayList<>(10);
-    ArrayList<Area> row3 = new ArrayList<>(10);
-    ArrayList<Area> row4 = new ArrayList<>(10);
-    ArrayList<Area> row5 = new ArrayList<>(10);
-    ArrayList<Area> row6 = new ArrayList<>(10);
-    ArrayList<Area> row7 = new ArrayList<>(10);
-    ArrayList<Area> row8 = new ArrayList<>(10);
-    ArrayList<Area> row9 = new ArrayList<>(10);
-    ArrayList<Area> row10 = new ArrayList<>(10);
-
     int initial_state = 0;
     double x_coordinate = 165;
     double y_coordinate = 165;
     String[][] matrixOfNames = new String[10][10];//macierz nazw pól - ex. "A1", "C3", "J10"
+    boolean isPlayerOneTurn = true;
+    boolean isSetup = true;
+    boolean isShipDirectionHorizontal = true;
+    List<Short> shipsLengthsFor1 = Arrays.asList(new Short[] {4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
+    List<Short> shipsLengthsFor2 = Arrays.asList(new Short[] {4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
 
 
+
+    EventHandler<MouseEvent> recClickHandler = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent e) {
+            Area recClicked = (Area) e.getSource();
+            if(!isSetup){
+                if (e.getButton() == MouseButton.PRIMARY && recClicked.getState() != 1.0) {
+                    recClicked.setState(1);
+                    recClicked.setFill(Color.YELLOW);
+                    recClicked.setStroke(null);
+                }
+                if (e.getButton() == MouseButton.PRIMARY && recClicked.getState() == 1.0) {
+                    recClicked.setState(0);
+                    recClicked.setFill(Color.BLACK);
+                    recClicked.setStroke(null);
+                }
+            }else{
+                placeShip(recClicked);
+            }
+        }
+    };
+    EventHandler<MouseEvent> recHoverHandler = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent e) {
+            Area recClicked = (Area) e.getSource();
+            if(isSetup){
+
+            }
+        }
+    };
+    public void placeShip(Area recClicked){
+        if(isShipDirectionHorizontal){
+            recClicked.setState(0);
+            //recClicked.ge
+        }else{
+
+        }
+    }
     public void initialize(){
         setMatrixOfNames();
         printMatrixOfNames();
         fillStorage();
         createBattleField();
+
         //printStorageAsStates();
-        clickingAtBattlefield_AssociationOfEventHandlersForRectangles();
+        //clickingAtBattlefield_AssociationOfEventHandlersForRectangles();
 
 
 
     }
 
     public void setMatrixOfNames(){
-        for(int i = 0; i < 10; i++){//i odp za y -> vertical - > cyfry
-            for(int j=0; j < 10; j++){// j odp za z -> horizontal -> litery
+        for(int i = 0; i < 10; i++){//vertical - > cyfry
+            for(int j=0; j < 10; j++){//horizontal -> litery
                 String nameOfsquare = "";
                 if(j == 0){   nameOfsquare += "A";  }
                 if(j == 1){   nameOfsquare += "B";  }
@@ -94,20 +131,15 @@ public class GameController {
     }
 
     public void fillStorage(){
-        arrListRecStorageLeft.add(row1);
-        arrListRecStorageLeft.add(row2);
-        arrListRecStorageLeft.add(row3);
-        arrListRecStorageLeft.add(row4);
-        arrListRecStorageLeft.add(row5);
-        arrListRecStorageLeft.add(row6);
-        arrListRecStorageLeft.add(row7);
-        arrListRecStorageLeft.add(row8);
-        arrListRecStorageLeft.add(row9);
-        arrListRecStorageLeft.add(row10);
+        for(int i = 0; i < 10; i++){
+            arrListRecStorageLeft.add(new ArrayList<>(10));
+        }
 
         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
-                Area rec = new Area(x_coordinate+30*j,y_coordinate+30*i,30,30, initial_state, 10*i + j, matrixOfNames[i][j]);
+                Area rec = new Area(x_coordinate+30*j,y_coordinate+30*i,30,30, initial_state, 10*i + j, matrixOfNames[i][j], i , j);
+                rec.addEventHandler(MouseEvent.MOUSE_CLICKED, recClickHandler);
+                rec.addEventHandler(MouseEvent.MOUSE_ENTERED, recHoverHandler);
                 arrListRecStorageLeft.get(i).add(rec);
             }
         }
@@ -130,22 +162,7 @@ public class GameController {
         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
                 anchorPane.getChildren().add(arrListRecStorageLeft.get(i).get(j));
-            }
-        }
-    }
 
-    public void clickingAtBattlefield_AssociationOfEventHandlersForRectangles(){
-        for(int i = 0; i < 10; i++){
-            for(int j = 0; j < 10; j++) {
-                int finalI1 = i;
-                int finalJ1 = j;
-                arrListRecStorageLeft.get(i).get(j).setOnMouseClicked(mouseEvent -> {
-                    if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                        arrListRecStorageLeft.get(finalI1).get(finalJ1).setState(1);
-                        arrListRecStorageLeft.get(finalI1).get(finalJ1).setFill(Color.YELLOW);
-                        arrListRecStorageLeft.get(finalI1).get(finalJ1).setStroke(null);
-                    }
-                });
             }
         }
     }
@@ -153,6 +170,7 @@ public class GameController {
     public void check(){
         System.out.println("Sprawdzanie wywołane - printStorageAsStates()");
         printStorageAsStates();
+        is_there_X_of_Y(3,3);
         /*System.out.println("row1");
         for(int i = 0; i < 10; i++){
             System.out.print(row1.get(i).getState()+" "+row1.get(i).getRidAsCoor()+" "+ row1.get(i).getRid() +"\t");
@@ -171,28 +189,26 @@ public class GameController {
         //is_there_X_of_Y(1,3);
     }
 
-//    public void is_there_X_of_Y(int numberOfShips, int lengthOfShip){
-//        System.out.println("Wywołanie is_there_X_of_Y dla numberOfShips = " + numberOfShips + " numberOfSegmentsInShip " + lengthOfShip);
-//        int nr_of_ships_found = 0;
-//        for (int i = 0; i < 10; i++) {
-//            for (int j = 0; j < 10 - lengthOfShip + 1; j++) {
-//                for (int s = 0; s < lengthOfShip; s++) {//szukanie w X statku
-//                    if (arrListRecStorageLeft.get(10*i + j + s).getState() != 1.0) {
-//                        break;
-//                    }
-//                    if (s == lengthOfShip - 1) {
-//                        nr_of_ships_found += 1;
-//                        System.out.println("ship found horizontally at : " + "x:" + i + " y:" + j);
-//                        //if_ship_found_horizontally_make_border(j ,i, lengthOfShip);
-//                        //printMatrix(matrixA);
-//                    }
-//                }
-//
-//            }
-//            //System.out.println();
-//        }
-//        System.out.println("nr_of_ships_found" + " " + nr_of_ships_found + " of length " + lengthOfShip + " horizontally");
-//    }
+    public void is_there_X_of_Y(int numberOfShips, int lengthOfShip){
+        System.out.println("Wywołanie is_there_X_of_Y dla numberOfShips = " + numberOfShips + " numberOfSegmentsInShip " + lengthOfShip);
+        int nr_of_ships_found = 0;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10 - lengthOfShip + 1; j++) {
+                for (int s = 0; s < lengthOfShip; s++) {//szukanie w X statku
+                    if (arrListRecStorageLeft.get(i).get(j + s).getState() != 1.0) {
+                        break;
+                    }
+                    if (s == lengthOfShip - 1) {
+                        nr_of_ships_found += 1;
+                        System.out.println("ship found horizontally at : " + "x:" + i + " y:" + j);
+                        //if_ship_found_horizontally_make_border(j ,i, lengthOfShip);
+                    }
+                }
+            }
+            //System.out.println();
+        }
+        System.out.println("nr_of_ships_found" + " " + nr_of_ships_found + " of length " + lengthOfShip + " horizontally");
+    }
 
     public void justExit(){
         Platform.exit();
