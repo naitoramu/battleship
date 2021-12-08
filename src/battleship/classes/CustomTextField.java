@@ -4,23 +4,18 @@ import javafx.scene.control.TextField;
 
 public class CustomTextField extends TextField{
     
-    private int textFieldID;
+    private String textFieldName;
 
-    public CustomTextField(int id) {
-        this.setTextFieldID(id);
+    public CustomTextField(String textFieldName) {
+        this.textFieldName = textFieldName;
     }
 
-    public CustomTextField(String text, int id) {
-        super(text);
-        this.setTextFieldID(id);
+    public String getTextFieldName() {
+        return textFieldName;
     }
 
-    public int getTextFieldID() {
-        return textFieldID;
-    }
-
-    public void setTextFieldID(int textFieldID) {
-        this.textFieldID = textFieldID;
+    public void setTextFieldName(String textFieldName) {
+        this.textFieldName = textFieldName;
     }
 
 }

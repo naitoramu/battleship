@@ -55,7 +55,7 @@ public class DBUtil {
     }
 
     public boolean createTables() {
-        String createUsers = "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, username varchar(255) NOT NULL UNIQUE, password varchar(32) NOT NULL)";
+        String createUsers = "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, username varchar(255) NOT NULL UNIQUE, password varchar(64) NOT NULL)";
         String createStatistics = "CREATE TABLE IF NOT EXISTS statistics (stats_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, number_of_wins INTEGER NOT NULL DEFAULT 0, number_of_losts INTEGER NOT NULL DEFAULT 0, FOREIGN KEY(user_id) REFERENCES users(user_id))";
         String createTrigger = "CREATE TRIGGER IF NOT EXISTS users_insert AFTER INSERT ON users BEGIN INSERT INTO statistics(user_id) VALUES(NEW.user_id); END";
         try {
