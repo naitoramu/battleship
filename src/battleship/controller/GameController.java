@@ -38,38 +38,32 @@ public class GameController {
     Paint errorColor = Color.RED;
 
 
-    EventHandler<MouseEvent> recClickHandler = new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent e) {
-            Area recClicked = (Area) e.getSource();
-            if (!isSetup) {
-                if (e.getButton() == MouseButton.PRIMARY && recClicked.getState() != 1.0) {
-                    recClicked.setState(1);
-                    recClicked.setFill(Color.YELLOW);
-                    recClicked.setStroke(null);
-                }
-                if (e.getButton() == MouseButton.PRIMARY && recClicked.getState() == 1.0) {
-                    recClicked.setState(0);
-                    recClicked.setFill(Color.BLACK);
-                    recClicked.setStroke(null);
-                }
+    EventHandler<MouseEvent> recClickHandler = e -> {
+        Area recClicked = (Area) e.getSource();
+        if (!isSetup) {
+            if (e.getButton() == MouseButton.PRIMARY && recClicked.getState() != 1.0) {
+                recClicked.setState(1);
+                recClicked.setFill(Color.YELLOW);
+                recClicked.setStroke(null);
+            }
+            if (e.getButton() == MouseButton.PRIMARY && recClicked.getState() == 1.0) {
+                recClicked.setState(0);
+                recClicked.setFill(Color.BLACK);
+                recClicked.setStroke(null);
+            }
+        } else {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                placeShip(recClicked);
             } else {
-                if (e.getButton() == MouseButton.PRIMARY) {
-                    placeShip(recClicked);
-                } else {
-                    isShipDirectionHorizontal = !isShipDirectionHorizontal;
-                    drawShipGhost(recClicked);
-                }
+                isShipDirectionHorizontal = !isShipDirectionHorizontal;
+                drawShipGhost(recClicked);
             }
         }
     };
-    EventHandler<MouseEvent> recHoverHandler = new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent e) {
-            Area recClicked = (Area) e.getSource();
-            if (isSetup) {
-                drawShipGhost(recClicked);
-            }
+    EventHandler<MouseEvent> recHoverHandler = e -> {
+        Area recClicked = (Area) e.getSource();
+        if (isSetup) {
+            drawShipGhost(recClicked);
         }
     };
 
@@ -131,7 +125,7 @@ public class GameController {
     }
 
     public String getHumanReadableCoordinates(int col, int row) {
-        return String.valueOf((char) (col + 65)) + Integer.toString(row + 1);
+        return (char) (col + 65) + Integer.toString(row + 1);
     }
 
 
