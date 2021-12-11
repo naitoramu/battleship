@@ -99,6 +99,7 @@ public class MainMenuController {
                 switchMenuVBox(menu.getMainMenuVBox());
                 Main.setUserLogedIn(true);
                 menu.refresh();
+                Main.loadDataFromDatabase();
                 System.out.println("Registration succeeded");
             }
             break;
@@ -145,7 +146,8 @@ public class MainMenuController {
     }
 
     private void switchLanguage(String lang){
-        menu.changeMenuLang(lang);
+        menu.changeInterfaceLanguage(lang);
+        menu.refresh();
     }
 
 }

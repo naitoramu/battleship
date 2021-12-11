@@ -2,53 +2,74 @@ package battleship.model;
 
 public class Statistics {
 
-    private int statsID;
-    private int userID;
+    private final String DIFFICULTY_LEVEL;
+    private int numberOfGames;
     private int numberOfWins;
     private int numberOfLosts;
+    private int numberOfShoots;
+    private int numberOfHits;
 
-    public Statistics(/* int statsID, int userID, */ int numberOfWins, int numberOfLosts) {
-        // this.setStatsID(statsID);
-        // this.setUserID(userID);
+    
+
+    public Statistics(String difficultyLevel, int numberOfGames, int numberOfWins, int numberOfLosts,
+            int numberOfShoots, int numberOfHits) {
+        this.DIFFICULTY_LEVEL = difficultyLevel;
+        this.numberOfGames = numberOfGames;
         this.numberOfWins = numberOfWins;
         this.numberOfLosts = numberOfLosts;
+        this.numberOfShoots = numberOfShoots;
+        this.numberOfHits = numberOfHits;
     }
 
-    public int getStatsID() {
-        return statsID;
+    public String getDifficultyLevel() {
+        return DIFFICULTY_LEVEL;
     }
 
-    public void setStatsID(int statsID) {
-        this.statsID = statsID;
+    public int getNumberOfGames() {
+        return numberOfGames;
     }
-
-    public int getUserID() {
-        return userID;
-    }
-
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void incrementNumberOfGames() {
+        this.numberOfGames++;
     }
 
     public int getNumberOfWins() {
         return numberOfWins;
     }
-
     public void incrementNumberOfWins() {
         this.numberOfWins++;
     }
-
+    
     public int getNumberOfLosts() {
         return numberOfLosts;
     }
-
     public void incrementNumberOfLosts() {
         this.numberOfLosts++;
     }
 
+    public int getNumberOfShoots() {
+        return numberOfShoots;
+    }
+    public void incrementNumberOfShoots() {
+        this.numberOfShoots++;
+    }
+    
+    public int getNumberOfHits() {
+        return numberOfHits;
+    }
+    public void incrementNumberOfHits() {
+        this.numberOfHits++;
+    }
+
+
     @Override
     public String toString() {
-        return "[Wins/Losts] : " + numberOfWins + "/" + numberOfLosts;
+        return "Difficulty level: " + getDifficultyLevel() + "\n" +
+            "(games|wins|losts|shoots|hits) : " + 
+            getNumberOfGames() + '|' + 
+            getNumberOfWins() + '|' + 
+            getNumberOfLosts() + '|' + 
+            getNumberOfShoots() + '|' + 
+            getNumberOfHits() + "\n";
     }
 
 }

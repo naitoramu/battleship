@@ -39,7 +39,7 @@ public class Menu {
         mainMenuVBox.addButton("pvp", buttonEventHandler);
         mainMenuVBox.addButton("cvc", buttonEventHandler);
         mainMenuVBox.addButton("rank", buttonEventHandler);
-        mainMenuVBox.addButton("stats", buttonEventHandler);
+        // mainMenuVBox.addButton("stats", buttonEventHandler);
         mainMenuVBox.addButton("change-lang", buttonEventHandler);
         mainMenuVBox.addButton("log-or-reg", buttonEventHandler);
         mainMenuVBox.addButton("exit", buttonEventHandler);
@@ -92,26 +92,46 @@ public class Menu {
         }
     }
 
-    public void changeMenuLang(String newLanguage) {
+    public void changeInterfaceLanguage(String language) {
 
-        mainMenuVBox.changeButtonsLang(newLanguage);
-        logInOrRegisterMenuVBox.changeButtonsLang(newLanguage);
-        registerMenuVBox.changeButtonsLang(newLanguage);
-        logInMenuVBox.changeButtonsLang(newLanguage);
+        mainMenuVBox.setInterfaceLanguage(language);
+        logInOrRegisterMenuVBox.setInterfaceLanguage(language);
+        registerMenuVBox.setInterfaceLanguage(language);
+        logInMenuVBox.setInterfaceLanguage(language);
+
     }
 
     public void refresh() {
         if(Main.isUserLogedIn()) {
-            setLogOutButton();
+            addButton("stats", 4);
+            swapLogOutButton();
         } else {
-            setLogInButton();
+            removeButton("stats");
+            swapLogInButton();
+        }
+
+        mainMenuVBox.setButtonLabels();
+        logInOrRegisterMenuVBox.setButtonLabels();
+        registerMenuVBox.setButtonLabels();
+        logInMenuVBox.setButtonLabels();
+    }
+
+    private void addButton(String buttonName, int buttonPosition) {
+        if(!mainMenuVBox.isButtonAlreadyAdded(buttonName)) {
+            mainMenuVBox.addButton(buttonName, buttonEventHandler, buttonPosition);
         }
     }
 
-    public void setLogOutButton() {
+    private void removeButton(String buttonName) {
+        if(mainMenuVBox.isButtonAlreadyAdded(buttonName)) {
+            mainMenuVBox.removeButton(buttonName);
+        }
+    }
+
+    public void swapLogOutButton() {
         mainMenuVBox.replaceButton("log-or-reg", "log-out");
     }
-    public void setLogInButton() {
+    public void swapLogInButton() {
         mainMenuVBox.replaceButton("log-out", "log-or-reg");
     }
 

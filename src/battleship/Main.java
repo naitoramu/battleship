@@ -27,7 +27,6 @@ public class Main extends Application {
         //     System.out.println("nie działa ;(");
         // }
         // System.out.println(users.get(5).getPassword().length());
-        System.out.println(users);
 
         // CSVDictReader labels = new CSVDictReader();
         // labels.laodCSVFile("/home/kuba/Git/battleship/src/battleship/lang/button-labels.csv");
@@ -53,8 +52,9 @@ public class Main extends Application {
                 .add(getClass().getResource("view/stylesheet/mainMenu.css").toExternalForm());
     }
 
-    private static void loadDataFromDatabase() {
+    public static void loadDataFromDatabase() {
         setUsers(db.selectUsers());
+        System.out.println(users);
     }
 
     public static List<User> getUsers() {

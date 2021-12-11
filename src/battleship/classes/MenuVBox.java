@@ -19,7 +19,6 @@ import javafx.scene.layout.VBox;
 
 public class MenuVBox extends VBox {
 
-    private List<User> users;
     private DBUtil db;
 
     protected int buttonWidth;
@@ -35,7 +34,6 @@ public class MenuVBox extends VBox {
     protected CSVDictReader promptLabels;
 
     public MenuVBox(CSVDictReader buttonLabels, CSVDictReader promptLabels) {
-        users = Main.getUsers();
         db = Main.getDB();
 
         this.buttonWidth = 300;
@@ -59,6 +57,15 @@ public class MenuVBox extends VBox {
         newButton.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
         buttons.add(newButton);
         this.getChildren().add(newButton);
+    }
+
+    public void addButton(String buttonName, EventHandler<MouseEvent> eventHandler, int buttonPosition) {
+        newButton = new CustomButton(buttonName);
+        newButton.setText(buttonLabels.getLabelByName(buttonName).get(interfaceLanguage));
+        newButton.setPrefSize(buttonWidth, buttonHeight);
+        newButton.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
+        buttons.add(newButton);
+        this.getChildren().add(buttonPosition, newButton);
     }
 
     public void replaceButton(String actualButtonName, String newButtonName) {
@@ -102,8 +109,8 @@ public class MenuVBox extends VBox {
         this.getChildren().add(newPasswordField);
     }
 
-    public void changeButtonsLang(String newLanguage) {
-        this.interfaceLanguage = newLanguage;
+    public void setButtonLabels() {
+
         for(CustomButton btn : buttons) {
             btn.setText(buttonLabels.getLabelByName(btn.getButtonName()).get(interfaceLanguage));
         }
@@ -125,7 +132,7 @@ public class MenuVBox extends VBox {
 
         if (fieldsAreNotEmpty(username, password)) {
             String hashedPassword = sha256(password);
-            for (User user : users) {
+            for (User user : Main.getUsers()) {
                 if (username.equals(user.getUsername()) && hashedPassword.equals(user.getPassword())) {
                     return true;
                 }
@@ -161,7 +168,7 @@ public class MenuVBox extends VBox {
     }
 
     private boolean isUsernameUnique(String username) {
-        for (User user : users) {
+        for (User user : Main.getUsers()) {
             if (username.equals(user.getUsername())) {
                 return false;
             }
@@ -197,6 +204,33 @@ public class MenuVBox extends VBox {
 
     public ArrayList<CustomButton> getMenuButtons() {
         return buttons;
+    }
+
+    public void setInterfaceLanguage(String language) {
+        this.interfaceLanguage = language;
+    }
+
+    public boolean isButtonAlreadyAdded(String buttonName) {
+        
+        for(CustomButton btn : buttons) {
+            if(btn.getButtonName().equals(buttonName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void removeButton(String buttonName) {
+        
+        CustomButton buttonToBeRemoved = null;
+        for(CustomButton btn : buttons) {
+            if(btn.getButtonName().equals(buttonName)) {
+                buttonToBeRemoved = btn;
+            }
+        }
+        buttons.remove(buttonToBeRemoved);
+        this.getChildren().remove(buttonToBeRemoved);
     }
 
 }
