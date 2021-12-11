@@ -32,10 +32,15 @@ public class GameController {
     boolean isSetup = true;
     boolean isShipDirectionHorizontal = true;
     List<Short> shipsLengthsFor1 = Arrays.asList(new Short[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
+    int cursor1 = 0;
     List<Short> shipsLengthsFor2 = Arrays.asList(new Short[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
-    Paint primaryColor = Color.BLUE;
+    int cursor2 = 0;
+
+    Paint primaryColor = Color.LIGHTBLUE;
     Paint ghostColor = Color.YELLOW;
     Paint errorColor = Color.RED;
+    //Paint shipColor = Color.BLACK;
+    Paint borderColor = Color.BLUEVIOLET;
 
 
     EventHandler<MouseEvent> recClickHandler = e -> {
@@ -54,10 +59,14 @@ public class GameController {
         } else {
             if (e.getButton() == MouseButton.PRIMARY) {
                 placeShip(recClicked);
-            } else {
+            }else if(e.getButton() == MouseButton.MIDDLE){
+                recClicked.setState(0);
+                recClicked.setFill(primaryColor);
+            }else {
                 isShipDirectionHorizontal = !isShipDirectionHorizontal;
                 drawShipGhost(recClicked);
             }
+
         }
     };
     EventHandler<MouseEvent> recHoverHandler = e -> {
@@ -68,26 +77,183 @@ public class GameController {
     };
 
     public void placeShip(Area recClicked) {
-        printStorageAsStates();
-        //use getAreasToPaint() to implement placing ships
-        if (isShipDirectionHorizontal) {
-            recClicked.setState(0);
-            //recClicked.ge
-        } else {
-
+        printStorageAsStates();//use getAreasToPaint() to implement placing ships
+        List<Area> areaToPutShip = getAreasToPaint(recClicked);
+        int arrSize = areaToPutShip.size();
+        for(int i = 0; i < areaToPutShip.size(); i++){//puts ship
+            areaToPutShip.get(i).setState(1);
+            areaToPutShip.get(i).setFill(Color.BLACK);
         }
+        //puts border around ship  -> state 9.0
+        if(isShipDirectionHorizontal){
+            boolean atLeftEdge = false;
+            boolean atRightEgde = false;
+            boolean atUpperEdge = false;
+            boolean atBottomEdge = false;
+
+            if(areaToPutShip.get(0).getRid() % 10 == 0){ atLeftEdge = true; System.out.println("położenie statku: LEWA KRAWĘDŹ PLANSZY");}
+            if((areaToPutShip.get(arrSize-1).getRid() % 10 == 9)) {atRightEgde = true;   System.out.println("położenie statku: PRAWA KRAWĘDŹ PLANSZY");}
+            if( areaToPutShip.get(0).getRid() < 10) {atUpperEdge = true; System.out.println("położenie statku: GoRNA KRAWĘDŹ PLANSZY");}
+            if( areaToPutShip.get(0).getRid() >= 90) {atBottomEdge = true; System.out.println("położenie statku: DoLNA KRAWĘDŹ PLANSZY");}
+
+            for(int i = 0; i < areaToPutShip.size(); i++){
+                if(atUpperEdge){//border directly above and under the ship
+                    areasList.get(areaToPutShip.get(i).getRid()+10).setState(9);
+                    areasList.get(areaToPutShip.get(i).getRid()+10).setFill(borderColor);
+                }else if(atBottomEdge){
+                    areasList.get(areaToPutShip.get(i).getRid()-10).setState(9);
+                    areasList.get(areaToPutShip.get(i).getRid()-10).setFill(borderColor);
+                }else if(!atUpperEdge && !atBottomEdge){
+                    areasList.get(areaToPutShip.get(i).getRid()-10).setState(9);
+                    areasList.get(areaToPutShip.get(i).getRid()-10).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(i).getRid()+10).setState(9);
+                    areasList.get(areaToPutShip.get(i).getRid()+10).setFill(borderColor);
+                }
+            }
+            if(atLeftEdge){
+                if(atUpperEdge){
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 + 10).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 + 10).setFill(borderColor);
+                }else if(atBottomEdge){
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 - 10).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 - 10).setFill(borderColor);
+                }else if(!atUpperEdge && !atBottomEdge){
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 - 10).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 - 10).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 + 10).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 + 10).setFill(borderColor);
+                }
+            }else if(atRightEgde){//left border
+                if(atUpperEdge){
+                    areasList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1 + 10).setFill(borderColor);
+                }else if(atBottomEdge){
+                    areasList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1 - 10).setFill(borderColor);
+                }else if(!atUpperEdge && !atBottomEdge){
+                    areasList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1 - 10).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 1 + 10).setFill(borderColor);
+                }
+            }else if(!atLeftEdge && !atRightEgde){
+                System.out.println("położenie statku: NIE PRZY BOCZNEJ KRAWĘDZI PLANSZY");
+                areasList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
+                areasList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
+                areasList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(9);
+                areasList.get(areaToPutShip.get(0).getRid() - 1 - 10).setFill(borderColor);
+                areasList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(9);
+                areasList.get(areaToPutShip.get(0).getRid() - 1 + 10).setFill(borderColor);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() +1).setState(9);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() +1).setFill(borderColor);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 - 10).setState(9);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 - 10).setFill(borderColor);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 + 10).setState(9);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() +1 + 10).setFill(borderColor);
+            }
+        }else{//when ship direction VERTICAL
+            boolean atLeftEdge = false;
+            boolean atRightEgde = false;
+            boolean atUpperEdge = false;
+            boolean atBottomEdge = false;
+
+            if(areaToPutShip.get(0).getRid() % 10 == 0){ atLeftEdge = true; System.out.println("położenie statku: LEWA KRAWĘDŹ PLANSZY");}
+            if((areaToPutShip.get(arrSize-1).getRid() % 10 == 9)) {atRightEgde = true;   System.out.println("położenie statku: PRAWA KRAWĘDŹ PLANSZY");}
+            if( areaToPutShip.get(0).getRid() < 10) {atUpperEdge = true; System.out.println("położenie statku: GoRNA KRAWĘDŹ PLANSZY");}
+            if( areaToPutShip.get(arrSize-1).getRid() >= 90) {atBottomEdge = true; System.out.println("położenie statku: DoLNA KRAWĘDŹ PLANSZY");}
+
+            for(int i = 0; i < areaToPutShip.size(); i++){
+                if(atLeftEdge){
+                    areasList.get(areaToPutShip.get(i).getRid() +1).setState(9);
+                    areasList.get(areaToPutShip.get(i).getRid() +1).setFill(borderColor);
+                }else if(atRightEgde){
+                    areasList.get(areaToPutShip.get(i).getRid() - 1).setState(9);
+                    areasList.get(areaToPutShip.get(i).getRid() - 1).setFill(borderColor);
+                }else if(!atLeftEdge && !atRightEgde){
+                    areasList.get(areaToPutShip.get(i).getRid() - 1).setState(9);
+                    areasList.get(areaToPutShip.get(i).getRid() - 1).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(i).getRid() +1).setState(9);
+                    areasList.get(areaToPutShip.get(i).getRid() +1).setFill(borderColor);
+                }
+            }
+            if(atUpperEdge){
+                if(atLeftEdge){
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 + 1).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 + 1).setFill(borderColor);
+                }else if(atRightEgde){
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 - 1).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 - 1).setFill(borderColor);
+                }else if(!atLeftEdge && !atRightEgde){
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 - 1).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 - 1).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 + 1).setState(9);
+                    areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 + 1).setFill(borderColor);
+                }
+            }else if(atBottomEdge){
+                if(atLeftEdge){
+                    areasList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10 + 1).setFill(borderColor);
+                }else if(atRightEgde){
+                    areasList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10 - 1).setFill(borderColor);
+                }else if(!atLeftEdge && !atRightEgde){
+                    areasList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10 - 1).setFill(borderColor);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(9);
+                    areasList.get(areaToPutShip.get(0).getRid() - 10 + 1).setFill(borderColor);
+                }
+            }else if(!atUpperEdge && !atBottomEdge){
+                areasList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
+                areasList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
+                areasList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(9);
+                areasList.get(areaToPutShip.get(0).getRid() - 10 - 1).setFill(borderColor);
+                areasList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(9);
+                areasList.get(areaToPutShip.get(0).getRid() - 10 + 1).setFill(borderColor);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10).setState(9);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10).setFill(borderColor);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 - 1).setState(9);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 - 1).setFill(borderColor);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 + 1).setState(9);
+                areasList.get(areaToPutShip.get(arrSize-1).getRid() + 10 + 1).setFill(borderColor);
+            }
+        }
+
     }
 
     public List<Area> getAreasToPaint(Area recClicked) {
         List<Area> occupiedAreas = new ArrayList<>();
         int rid = recClicked.getRid();
         if (isShipDirectionHorizontal) {
-            while (rid < recClicked.getRid() + shipsLengthsFor1.get(0) && rid / 10 == recClicked.getRid() / 10) {
+            while (rid < recClicked.getRid() + shipsLengthsFor1.get(cursor1) && rid / 10 == recClicked.getRid() / 10 && areasList.get(rid).getState() != 1.0 && areasList.get(rid).getState() != 9.0) {
                 occupiedAreas.add(areasList.get(rid));
                 rid += 1;
             }
         } else {
-            while (rid < recClicked.getRid() + shipsLengthsFor1.get(0) * 10 && rid < 100) {
+            while (rid < recClicked.getRid() + shipsLengthsFor1.get(cursor1) * 10 && rid < 100 && areasList.get(rid).getState() != 1.0 && areasList.get(rid).getState() != 9.0) {
                 occupiedAreas.add(areasList.get(rid));
                 rid += 10;
             }
@@ -106,7 +272,7 @@ public class GameController {
 
     public void drawShipGhost(Area recClicked) {
         List<Area> areasToPaint = getAreasToPaint(recClicked);
-        Paint shipColor = (areasToPaint.size() < shipsLengthsFor1.get(0)) ? errorColor : ghostColor;
+        Paint shipColor = (areasToPaint.size() < shipsLengthsFor1.get(cursor1)) ? errorColor : ghostColor;
         clearGhosts();
         for (Area rec : areasToPaint) {
             rec.setFill(shipColor);
@@ -117,6 +283,7 @@ public class GameController {
         printMatrixOfNames();
         fillStorage();
         createBattleField();
+
 
         //printStorageAsStates();
         //clickingAtBattlefield_AssociationOfEventHandlersForRectangles();
@@ -159,7 +326,7 @@ public class GameController {
         System.out.println("********************************");
         int i = 0;
         while (i < areasList.size()) {
-            System.out.print(areasList.get(i).getState() + "\t");
+            System.out.print(/*areasList.get(i).getRidAsCoor() + "-" + */areasList.get(i).getState() + "\t");
             if ((i + 1) % 10 == 0) System.out.println();
             i += 1;
         }
@@ -217,5 +384,4 @@ public class GameController {
     public void justExit() {
         Platform.exit();
     }
-
 }
