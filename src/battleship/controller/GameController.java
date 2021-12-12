@@ -31,9 +31,11 @@ public class GameController {
     boolean isPlayerOneTurn = true;
     boolean isSetup = true;
     boolean isShipDirectionHorizontal = true;
+
     List<Short> shipsLengthsFor1 = Arrays.asList(new Short[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
     int cursor1 = 0;
     boolean areAllShipsPlaced1 = false;
+
     List<Short> shipsLengthsFor2 = Arrays.asList(new Short[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
     int cursor2 = 0;
     boolean areAllShipsPlaced2 = false;
@@ -42,7 +44,7 @@ public class GameController {
     Paint ghostColor = Color.YELLOW;
     Paint errorColor = Color.RED;
     //Paint shipColor = Color.BLACK;
-    Paint borderColor = Color.BLUEVIOLET;
+    Paint borderColor = Color.BLUE;
 
 
     EventHandler<MouseEvent> recClickHandler = e -> {
@@ -60,7 +62,7 @@ public class GameController {
             }
         } else {
             if (e.getButton() == MouseButton.PRIMARY) {
-                placeShip(recClicked);
+                if(!areAllShipsPlaced1){ placeShip(recClicked);}
             }else if(e.getButton() == MouseButton.MIDDLE){
                 recClicked.setState(0);
                 recClicked.setFill(primaryColor);
@@ -79,15 +81,20 @@ public class GameController {
     };
 
     public void placeShip(Area recClicked) {
-
         List<Area> areaToPutShip = getAreasToPaint(recClicked);
         int arrSize = areaToPutShip.size();
+        boolean wasErrorCode = false;//
         for (int i = 0; i < areaToPutShip.size(); i++) {//puts ship
+            if(areaToPutShip.get(i).getFill() == errorColor){
+                System.out.println("Place your ship elsewhere");
+                wasErrorCode = true;
+                break;
+            }
             areaToPutShip.get(i).setState(1);
             areaToPutShip.get(i).setFill(Color.BLACK);
         }
         //puts border around ship  -> state 9.0
-        if (isShipDirectionHorizontal) {
+        if (isShipDirectionHorizontal && !wasErrorCode) {
             boolean atLeftEdge = false;
             boolean atRightEgde = false;
             boolean atUpperEdge = false;
@@ -196,7 +203,7 @@ public class GameController {
                     areasList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setFill(borderColor);
                 }
             }
-        } else {
+        } else if(!isShipDirectionHorizontal && !wasErrorCode){
             //when ship direction VERTICAL
             boolean atLeftEdge = false;
             boolean atRightEgde = false;
@@ -308,10 +315,10 @@ public class GameController {
             }
         }
 
-        if(cursor1 < shipsLengthsFor1.size()-1){
+        if(cursor1 < shipsLengthsFor1.size()-1 && !wasErrorCode){
             System.out.println("Statek z indexu: " + cursor1 + "\t " + shipsLengthsFor1.get(cursor1) + "-masztowiec");
             cursor1++;
-        }else{
+        }else if (cursor1 == shipsLengthsFor1.size()-1){
             cursor1 = shipsLengthsFor1.size() - 1;
             System.out.println("Statek z indexu: " + cursor1 + "\t " + shipsLengthsFor1.get(cursor1) + "-masztowiec");
             System.out.println("WSZYSTKIE STATKI NA POLU BITWY");
