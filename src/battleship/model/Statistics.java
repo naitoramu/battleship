@@ -9,8 +9,6 @@ public class Statistics {
     private int numberOfShoots;
     private int numberOfHits;
 
-    
-
     public Statistics(String difficultyLevel, int numberOfGames, int numberOfWins, int numberOfLosts,
             int numberOfShoots, int numberOfHits) {
         this.DIFFICULTY_LEVEL = difficultyLevel;
@@ -28,6 +26,7 @@ public class Statistics {
     public int getNumberOfGames() {
         return numberOfGames;
     }
+
     public void incrementNumberOfGames() {
         this.numberOfGames++;
     }
@@ -35,13 +34,15 @@ public class Statistics {
     public int getNumberOfWins() {
         return numberOfWins;
     }
+
     public void incrementNumberOfWins() {
         this.numberOfWins++;
     }
-    
+
     public int getNumberOfLosts() {
         return numberOfLosts;
     }
+
     public void incrementNumberOfLosts() {
         this.numberOfLosts++;
     }
@@ -49,27 +50,40 @@ public class Statistics {
     public int getNumberOfShoots() {
         return numberOfShoots;
     }
+
     public void incrementNumberOfShoots() {
         this.numberOfShoots++;
     }
-    
+
     public int getNumberOfHits() {
         return numberOfHits;
     }
+
     public void incrementNumberOfHits() {
         this.numberOfHits++;
     }
 
+    public int getAccuracy() {
+
+        if (this.numberOfShoots == 0) {
+            return 0;
+        } else {
+            double numberOfShoots = this.numberOfShoots;
+            double numberOfHits = this.numberOfHits;
+            double accuracy = numberOfHits / numberOfShoots * 100;
+            return (int) Math.round(accuracy);
+        }
+    }
 
     @Override
     public String toString() {
         return "Difficulty level: " + getDifficultyLevel() + "\n" +
-            "(games|wins|losts|shoots|hits) : " + 
-            getNumberOfGames() + '|' + 
-            getNumberOfWins() + '|' + 
-            getNumberOfLosts() + '|' + 
-            getNumberOfShoots() + '|' + 
-            getNumberOfHits() + "\n";
+                "(games|wins|losts|shoots|hits) : " +
+                getNumberOfGames() + '|' +
+                getNumberOfWins() + '|' +
+                getNumberOfLosts() + '|' +
+                getNumberOfShoots() + '|' +
+                getNumberOfHits() + "\n";
     }
 
 }

@@ -72,6 +72,9 @@ public class MainMenuController {
             case "pvc":
             startGame(btn);
 
+            case "rank":
+            showRanking(btn);
+
             case "change-lang":
             switchMenuVBox(menu.getChangeLangMenuVBox());
             System.out.println("Menu VBox has been changed");
@@ -137,6 +140,16 @@ public class MainMenuController {
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
         scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/game.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
+    }
+
+    private void showRanking(CustomButton btn) throws IOException {
+
+        Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/rankingView.fxml"));
+        Scene scene = new Scene(newRoot);
+        Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
+        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/ranking.css").toExternalForm());
+        stageTheButtonBelongs.setScene(scene);
+
     }
 
     private void switchMenuVBox(VBox VBox){

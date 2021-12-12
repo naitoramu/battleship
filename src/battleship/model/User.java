@@ -70,6 +70,16 @@ public class User {
         this.pathToGameRecord = pathToGameRecord;
     }
 
+    public int getEasyLvlNumberOfGames() {
+        return easyLvlStatistics.getNumberOfGames();
+    }
+    public int getEasyLvlNumberOfWins() {
+        return easyLvlStatistics.getNumberOfWins();
+    }
+    public int getEasyLvlAccuracy() {
+        return easyLvlStatistics.getAccuracy();
+    }
+
 
     @Override
       public String toString() {
