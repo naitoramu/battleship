@@ -17,14 +17,15 @@ public class Main extends Application {
     private static List<User> users;
 
     private static boolean userLogedIn = false;
+    private static String interfaceLanguage = "EN";
 
     public static void main(String[] args) throws Exception {
 
         loadDataFromDatabase();
         // if(users.get(0).getPassword().equals(users.get(1).getPassword())){
-        //     System.out.println("działa zajebiście");
+        // System.out.println("działa zajebiście");
         // } else {
-        //     System.out.println("nie działa ;(");
+        // System.out.println("nie działa ;(");
         // }
         // System.out.println(users.get(5).getPassword().length());
 
@@ -65,15 +66,22 @@ public class Main extends Application {
         Main.users = users;
     }
 
-    public static DBUtil getDB(){
+    public static DBUtil getDB() {
         return db;
     }
-    
+
     public static boolean isUserLogedIn() {
         return userLogedIn;
     }
 
     public static void setUserLogedIn(boolean isUserLogedIn) {
         Main.userLogedIn = isUserLogedIn;
+    }
+
+    public static String getInterfaceLanguage() {
+        return Main.interfaceLanguage;
+    }
+    public static void setInterfaceLanguage(String interfaceLanguage) {
+        Main.interfaceLanguage = interfaceLanguage;
     }
 }

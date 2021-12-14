@@ -123,13 +123,14 @@ public class MainMenuController {
             break;
 
             case "language":
-            switchLanguage(btn.getText());
+            Main.setInterfaceLanguage(btn.getText());
+            switchLanguage();
             switchMenuVBox(menu.getMainMenuVBox());
             System.out.println("Application interface language has been changed");
             break;
 
             default:
-            System.out.println("You pressed button nr. " + buttonName);
+            System.out.println("You pressed button '" + buttonName + "'");
             break;
         }
     }
@@ -158,9 +159,10 @@ public class MainMenuController {
         menuVBox.getChildren().addAll(newVBox.getChildren());
     }
 
-    private void switchLanguage(String lang){
-        menu.changeInterfaceLanguage(lang);
+    private void switchLanguage(){
+        menu.changeInterfaceLanguage(Main.getInterfaceLanguage());
         menu.refresh();
+
     }
 
 }

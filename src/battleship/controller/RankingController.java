@@ -3,18 +3,16 @@ package battleship.controller;
 import static battleship.Main.getUsers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
-import battleship.classes.CSVDictReader;
 import battleship.classes.CustomTableColumn;
-import battleship.model.Statistics;
-import battleship.model.User;
+import battleship.classes.Ranking;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 
 public class RankingController {
 
@@ -23,56 +21,86 @@ public class RankingController {
     @FXML
     private Label titleLable;
     @FXML
-    private ChoiceBox<String> difficultyLevelChoiceBox;
+    private ChoiceBox<String> categoryChoiceBox;
     @FXML
     private TableView rankingTableView;
 
-    private String rootPath;
-    private CSVDictReader tableColumnLabels;
+    private ArrayList<CustomTableColumn> currentTableColumns;
+
+    private Ranking ranking;
 
 
-    public RankingController() {
-        rootPath = System.getProperty("user.dir");
+    public RankingController() throws IOException {
+
+        ranking = new Ranking();
     }
 
     @FXML
     void initialize() throws IOException {
-        loadTableColumnLabels();
 
-        CustomTableColumn<User, String> usernameTableColumn = new CustomTableColumn("username");
-        usernameTableColumn.setText(tableColumnLabels.getLabelByName("username").get("PL"));
-        usernameTableColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+        categoryChoiceBox.getItems().add("EASY");
+        categoryChoiceBox.getItems().add("MEDIUM");
+        categoryChoiceBox.getItems().add("HARD");
 
-        CustomTableColumn<User, Integer> numberOfGamesTableColumn = new CustomTableColumn("number_of_games");
-        numberOfGamesTableColumn.setText(tableColumnLabels.getLabelByName(numberOfGamesTableColumn.getColumnName()).get("PL"));
-        numberOfGamesTableColumn.setCellValueFactory(new PropertyValueFactory<>("easyLvlNumberOfGames"));
+        categoryChoiceBox.setOnAction((event) -> {
+            
+            switchCategory();
+            System.out.println(categoryChoiceBox.getValue());
 
-        CustomTableColumn<User, Integer> numberOfWinsTableColumn = new CustomTableColumn("number_of_wins");
-        numberOfWinsTableColumn.setText(tableColumnLabels.getLabelByName(numberOfWinsTableColumn.getColumnName()).get("PL"));
-        numberOfWinsTableColumn.setCellValueFactory(new PropertyValueFactory<>("easyLvlNumberOfWins"));
-
-        CustomTableColumn<User, Integer> accuracyTableColumn = new CustomTableColumn("accuracy");
-        accuracyTableColumn.setText(tableColumnLabels.getLabelByName(accuracyTableColumn.getColumnName()).get("PL"));
-        accuracyTableColumn.setCellValueFactory(new PropertyValueFactory<>("easyLvlAccuracy"));
+        });
         
-        rankingTableView.getColumns().add(usernameTableColumn);
-        rankingTableView.getColumns().add(numberOfGamesTableColumn);
-        rankingTableView.getColumns().add(numberOfWinsTableColumn);
-        rankingTableView.getColumns().add(accuracyTableColumn);
+        rankingTableView.getColumns().add(ranking.getUsernameTableColumn());
+
+        currentTableColumns = ranking.getEasyLvlTableColumns();
+
+        rankingTableView.getColumns().addAll(currentTableColumns);
+
+        categoryChoiceBox.setValue("EASY");
 
         rankingTableView.getItems().addAll(getUsers());
 
-
     }
 
-    private void loadTableColumnLabels() throws IOException {
+    private void switchCategory() {
 
-        String csvFilePath = rootPath + "/src/battleship/lang/tableColumn-labels.csv";
-        try {
-            tableColumnLabels = new CSVDictReader(csvFilePath);
-        } catch (Exception IOException) {
-            System.out.println("Cannot load file: " + csvFilePath);
+        switch(categoryChoiceBox.getValue()) {
+            case "EASY":
+            setEasyTableColumns();
+            break;
+
+            case "MEDIUM":
+            setMediumTableColumns();
+            break;
+
+            case "HARD":
+            setHardTableColumns();
+            break;
+
+            default:
+            System.out.println("Not known category");
+            break;
         }
+    }
+
+    private void setEasyTableColumns() {
+        rankingTableView.getColumns().removeAll(currentTableColumns);
+
+        currentTableColumns = ranking.getEasyLvlTableColumns();
+        rankingTableView.getColumns().addAll(currentTableColumns);
+    }
+
+    private void setMediumTableColumns() {
+        rankingTableView.getColumns().removeAll(currentTableColumns);
+
+        currentTableColumns = ranking.getMediumLvlTableColumns();
+        rankingTableView.getColumns().addAll(currentTableColumns);
+    }
+
+    private void setHardTableColumns() {
+        rankingTableView.getColumns().removeAll(currentTableColumns);
+
+        currentTableColumns = ranking.getHardLvlTableColumns();
+        rankingTableView.getColumns().addAll(currentTableColumns);
     }
     
 }

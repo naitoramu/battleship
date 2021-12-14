@@ -80,6 +80,26 @@ public class User {
         return easyLvlStatistics.getAccuracy();
     }
 
+    public int getMediumLvlNumberOfGames() {
+        return mediumLvlStatistics.getNumberOfGames();
+    }
+    public int getMediumLvlNumberOfWins() {
+        return mediumLvlStatistics.getNumberOfWins();
+    }
+    public int getMediumLvlAccuracy() {
+        return mediumLvlStatistics.getAccuracy();
+    }
+
+    public int getHardLvlNumberOfGames() {
+        return hardLvlStatistics.getNumberOfGames();
+    }
+    public int getHardLvlNumberOfWins() {
+        return hardLvlStatistics.getNumberOfWins();
+    }
+    public int getHardLvlAccuracy() {
+        return hardLvlStatistics.getAccuracy();
+    }
+
 
     @Override
       public String toString() {

@@ -25,7 +25,7 @@
                         <Font size="64.0" />
                      </font>
                   </Label>
-                  <ChoiceBox fx:id="difficultyLevelChoiceBox" prefHeight="60.0" prefWidth="230.0" />
+                  <ChoiceBox fx:id="categoryChoiceBox" prefHeight="60.0" prefWidth="230.0" />
                </children>
             </HBox>
             <TableView fx:id="rankingTableView" prefHeight="530.0" prefWidth="1200.0" />
