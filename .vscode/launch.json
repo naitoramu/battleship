@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch DBTest",
+            "request": "launch",
+            "mainClass": "battleship.test.DBTest",
+            "projectName": "battleship_1ac7716"
+        },
+        {
+            "type": "java",
             "name": "Launch Main",
             "request": "launch",
             "mainClass": "battleship.Main",

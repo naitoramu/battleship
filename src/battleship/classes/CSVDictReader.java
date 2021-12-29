@@ -29,7 +29,7 @@ public class CSVDictReader {
     public CSVRecord getLabelByName(String name) {
         for(CSVRecord record : labelsList) {
             if (record.get("Name").equals(name)) {
-                System.out.println(record);
+                // System.out.println(record);
                 return record;
             }
         }

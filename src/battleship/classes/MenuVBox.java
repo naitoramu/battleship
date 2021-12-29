@@ -1,25 +1,20 @@
 package battleship.classes;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.csv.CSVRecord;
 
 import battleship.Main;
 import battleship.model.User;
 import battleship.util.DBUtil;
 import javafx.event.EventHandler;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class MenuVBox extends VBox {
 
-    private List<User> users;
     private DBUtil db;
 
     protected int buttonWidth;
@@ -33,9 +28,9 @@ public class MenuVBox extends VBox {
     private CustomButton newButton;
     protected CSVDictReader buttonLabels;
     protected CSVDictReader promptLabels;
+    protected Region spaceBeforeLastButton;
 
     public MenuVBox(CSVDictReader buttonLabels, CSVDictReader promptLabels) {
-        users = Main.getUsers();
         db = Main.getDB();
 
         this.buttonWidth = 300;
@@ -45,11 +40,12 @@ public class MenuVBox extends VBox {
 
         this.buttonLabels = buttonLabels;
         this.promptLabels = promptLabels;
-        this.interfaceLanguage = "EN";
+        this.interfaceLanguage = Main.getInterfaceLanguage();
 
         this.buttons = new ArrayList<CustomButton>();
         this.textFields = new ArrayList<CustomTextField>();
         this.passwordFields = new ArrayList<CustomPasswordField>();
+        this.spaceBeforeLastButton = new Region();
     }
 
     public void addButton(String buttonName, EventHandler<MouseEvent> eventHandler) {
@@ -59,6 +55,15 @@ public class MenuVBox extends VBox {
         newButton.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
         buttons.add(newButton);
         this.getChildren().add(newButton);
+    }
+
+    public void addButton(String buttonName, EventHandler<MouseEvent> eventHandler, int buttonPosition) {
+        newButton = new CustomButton(buttonName);
+        newButton.setText(buttonLabels.getLabelByName(buttonName).get(interfaceLanguage));
+        newButton.setPrefSize(buttonWidth, buttonHeight);
+        newButton.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
+        buttons.add(newButton);
+        this.getChildren().add(buttonPosition, newButton);
     }
 
     public void replaceButton(String actualButtonName, String newButtonName) {
@@ -102,8 +107,14 @@ public class MenuVBox extends VBox {
         this.getChildren().add(newPasswordField);
     }
 
-    public void changeButtonsLang(String newLanguage) {
-        this.interfaceLanguage = newLanguage;
+    public void addSpaceBeforeLastButton() {
+        // this.setVgrow(spaceBeforeLastButton, Priority.ALWAYS);
+        spaceBeforeLastButton.setPrefHeight(buttonHeight*1);
+        this.getChildren().add(spaceBeforeLastButton);
+    }
+
+    public void setButtonLabels() {
+
         for(CustomButton btn : buttons) {
             btn.setText(buttonLabels.getLabelByName(btn.getButtonName()).get(interfaceLanguage));
         }
@@ -125,7 +136,7 @@ public class MenuVBox extends VBox {
 
         if (fieldsAreNotEmpty(username, password)) {
             String hashedPassword = sha256(password);
-            for (User user : users) {
+            for (User user : Main.getUsers()) {
                 if (username.equals(user.getUsername()) && hashedPassword.equals(user.getPassword())) {
                     return true;
                 }
@@ -161,7 +172,7 @@ public class MenuVBox extends VBox {
     }
 
     private boolean isUsernameUnique(String username) {
-        for (User user : users) {
+        for (User user : Main.getUsers()) {
             if (username.equals(user.getUsername())) {
                 return false;
             }
@@ -197,6 +208,33 @@ public class MenuVBox extends VBox {
 
     public ArrayList<CustomButton> getMenuButtons() {
         return buttons;
+    }
+
+    public void setInterfaceLanguage(String language) {
+        this.interfaceLanguage = language;
+    }
+
+    public boolean isButtonAlreadyAdded(String buttonName) {
+        
+        for(CustomButton btn : buttons) {
+            if(btn.getButtonName().equals(buttonName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void removeButton(String buttonName) {
+        
+        CustomButton buttonToBeRemoved = null;
+        for(CustomButton btn : buttons) {
+            if(btn.getButtonName().equals(buttonName)) {
+                buttonToBeRemoved = btn;
+            }
+        }
+        buttons.remove(buttonToBeRemoved);
+        this.getChildren().remove(buttonToBeRemoved);
     }
 
 }

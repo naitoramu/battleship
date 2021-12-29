@@ -5,15 +5,22 @@ public class User {
     private int userID;
     private String username;
     private String password;
-    private Statistics statistics;
+    private Statistics easyLvlStatistics;
+    private Statistics mediumLvlStatistics;
+    private Statistics hardLvlStatistics;
     private String pathToGameRecord;
 
-    public User(int userID, String username, String password, Statistics statistics) {
+    
+    public User(int userID, String username, String password, Statistics easyLvlStatistics,
+            Statistics mediumLvlStatistics, Statistics hardLvlStatistics) {
         this.userID = userID;
         this.username = username;
         this.password = password;
-        this.statistics = statistics;
+        this.easyLvlStatistics = easyLvlStatistics;
+        this.mediumLvlStatistics = mediumLvlStatistics;
+        this.hardLvlStatistics = hardLvlStatistics;
     }
+
     public int getId() {
         return userID;
     }
@@ -35,11 +42,25 @@ public class User {
         this.password = password;
     }
 
-    public Statistics getStatistics(){
-        return this.statistics;
+    public Statistics getHardLvlStatistics() {
+        return hardLvlStatistics;
     }
-    public void setStatistics(Statistics statistics){
-        this.statistics = statistics;
+    public void setHardLvlStatistics(Statistics hardLvlStatistics) {
+        this.hardLvlStatistics = hardLvlStatistics;
+    }
+
+    public Statistics getMediumLvlStatistics() {
+        return mediumLvlStatistics;
+    }
+    public void setMediumLvlStatistics(Statistics mediumLvlStatistics) {
+        this.mediumLvlStatistics = mediumLvlStatistics;
+    }
+
+    public Statistics getEasyLvlStatistics() {
+        return easyLvlStatistics;
+    }
+    public void setEasyLvlStatistics(Statistics easyLvlStatistics) {
+        this.easyLvlStatistics = easyLvlStatistics;
     }
 
     public String getPathToGameRecord(){
@@ -49,10 +70,44 @@ public class User {
         this.pathToGameRecord = pathToGameRecord;
     }
 
+    public int getEasyLvlNumberOfGames() {
+        return easyLvlStatistics.getNumberOfGames();
+    }
+    public int getEasyLvlNumberOfWins() {
+        return easyLvlStatistics.getNumberOfWins();
+    }
+    public int getEasyLvlAccuracy() {
+        return easyLvlStatistics.getAccuracy();
+    }
+
+    public int getMediumLvlNumberOfGames() {
+        return mediumLvlStatistics.getNumberOfGames();
+    }
+    public int getMediumLvlNumberOfWins() {
+        return mediumLvlStatistics.getNumberOfWins();
+    }
+    public int getMediumLvlAccuracy() {
+        return mediumLvlStatistics.getAccuracy();
+    }
+
+    public int getHardLvlNumberOfGames() {
+        return hardLvlStatistics.getNumberOfGames();
+    }
+    public int getHardLvlNumberOfWins() {
+        return hardLvlStatistics.getNumberOfWins();
+    }
+    public int getHardLvlAccuracy() {
+        return hardLvlStatistics.getAccuracy();
+    }
+
 
     @Override
       public String toString() {
-          return "["+userID+"] - "+username+" - "+password + "\n" + statistics;
+          return "\n---------------------------------------------------\n" +
+            "|"+ userID +
+            "|"+ username +
+            "|"+ password + "|\n" + 
+            getEasyLvlStatistics() + getMediumLvlStatistics() + getHardLvlStatistics();
       }
 
 }
