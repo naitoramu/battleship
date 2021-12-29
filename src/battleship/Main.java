@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import battleship.classes.CSVDictReader;
 import battleship.model.User;
 import battleship.util.DBUtil;
 

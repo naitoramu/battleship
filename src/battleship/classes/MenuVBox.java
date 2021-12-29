@@ -1,20 +1,16 @@
 package battleship.classes;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.csv.CSVRecord;
 
 import battleship.Main;
 import battleship.model.User;
 import battleship.util.DBUtil;
 import javafx.event.EventHandler;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class MenuVBox extends VBox {
@@ -32,6 +28,7 @@ public class MenuVBox extends VBox {
     private CustomButton newButton;
     protected CSVDictReader buttonLabels;
     protected CSVDictReader promptLabels;
+    protected Region spaceBeforeLastButton;
 
     public MenuVBox(CSVDictReader buttonLabels, CSVDictReader promptLabels) {
         db = Main.getDB();
@@ -43,11 +40,12 @@ public class MenuVBox extends VBox {
 
         this.buttonLabels = buttonLabels;
         this.promptLabels = promptLabels;
-        this.interfaceLanguage = "EN";
+        this.interfaceLanguage = Main.getInterfaceLanguage();
 
         this.buttons = new ArrayList<CustomButton>();
         this.textFields = new ArrayList<CustomTextField>();
         this.passwordFields = new ArrayList<CustomPasswordField>();
+        this.spaceBeforeLastButton = new Region();
     }
 
     public void addButton(String buttonName, EventHandler<MouseEvent> eventHandler) {
@@ -107,6 +105,12 @@ public class MenuVBox extends VBox {
         newPasswordField.setPrefSize(textFieldWidth, textFieldHeight);
         passwordFields.add(newPasswordField);
         this.getChildren().add(newPasswordField);
+    }
+
+    public void addSpaceBeforeLastButton() {
+        // this.setVgrow(spaceBeforeLastButton, Priority.ALWAYS);
+        spaceBeforeLastButton.setPrefHeight(buttonHeight*1);
+        this.getChildren().add(spaceBeforeLastButton);
     }
 
     public void setButtonLabels() {

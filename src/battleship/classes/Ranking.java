@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import battleship.model.User;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class Ranking {
@@ -14,16 +16,18 @@ public class Ranking {
     private CSVDictReader tableColumnLabels;
 
     private CustomTableColumn<User, String> usernameTableColumn;
+    private ReadOnlyDoubleProperty tableWidthProperty;
 
     private ArrayList<CustomTableColumn> easyLvlTableColumns;
     private ArrayList<CustomTableColumn> mediumLvlTableColumns;
     private ArrayList<CustomTableColumn> hardLvlTableColumns;
 
-    public Ranking() throws IOException {
+    public Ranking(ReadOnlyDoubleProperty tableWidthProperty) throws IOException {
         rootPath = System.getProperty("user.dir");
         easyLvlTableColumns = new ArrayList<>();
         mediumLvlTableColumns = new ArrayList<>();
         hardLvlTableColumns = new ArrayList<>();
+        this.tableWidthProperty = tableWidthProperty;
 
         loadTableColumnLabels();
 
@@ -31,6 +35,10 @@ public class Ranking {
         createTableColumnByDifficultyLvl("EASY", easyLvlTableColumns);
         createTableColumnByDifficultyLvl("MEDIUM", mediumLvlTableColumns);
         createTableColumnByDifficultyLvl("HARD", hardLvlTableColumns);
+        
+        setColumnsWidth(easyLvlTableColumns, 0.2);
+        setColumnsWidth(mediumLvlTableColumns, 0.2);
+        setColumnsWidth(hardLvlTableColumns, 0.2);
 
     }
 
@@ -38,6 +46,7 @@ public class Ranking {
         usernameTableColumn = new CustomTableColumn("username");
         usernameTableColumn.setText(tableColumnLabels.getLabelByName("username").get(getInterfaceLanguage()));
         usernameTableColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+        usernameTableColumn.prefWidthProperty().bind(tableWidthProperty.multiply(0.4));
     }
 
     private void createTableColumnByDifficultyLvl(String difficulty, ArrayList<CustomTableColumn> tableColumns) {
@@ -62,6 +71,12 @@ public class Ranking {
         tableColumns.add(numberOfGamesTableColumn);
         tableColumns.add(numberOfWinsTableColumn);
         tableColumns.add(accuracyTableColumn);
+    }
+
+    private void setColumnsWidth(ArrayList<CustomTableColumn> tableColumns, Double factor) {
+        for(CustomTableColumn column: tableColumns) {
+            column.prefWidthProperty().bind(tableWidthProperty.multiply(factor));
+        }
     }
 
     private void loadTableColumnLabels() throws IOException {

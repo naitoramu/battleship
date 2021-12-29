@@ -15,7 +15,7 @@
          <children>
             <HBox alignment="TOP_CENTER" prefHeight="133.0" prefWidth="1280.0">
                <children>
-                  <Button fx:id="backButton" mnemonicParsing="false" prefHeight="60.0" prefWidth="230.0" text="Back">
+                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonPressed" prefHeight="60.0" prefWidth="230.0" text="Back">
                      <font>
                         <Font size="26.0" />
                      </font>

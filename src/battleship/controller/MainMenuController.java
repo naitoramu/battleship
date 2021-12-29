@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import battleship.Main;
 import battleship.classes.CustomButton;
 import battleship.classes.Menu;
+import battleship.classes.MenuVBox;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -14,7 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainMenuController {
@@ -24,7 +25,7 @@ public class MainMenuController {
     @FXML
     private Label errorLabel;
     @FXML
-    private VBox menuVBox;
+    private StackPane menuStackPane;
     private Menu menu;
 
     private String rootPath;
@@ -60,7 +61,8 @@ public class MainMenuController {
 
     private void initializeMenu() throws IOException{
         menu = new Menu(buttonEventHandler, rootPath);
-        switchMenuVBox(menu.getMainMenuVBox());
+        menu.refresh();
+        menuStackPane.getChildren().addAll(menu.getMainMenuVBox());
     }
 
     private void handleButton(CustomButton btn) throws IOException, NoSuchAlgorithmException{
@@ -129,6 +131,16 @@ public class MainMenuController {
             System.out.println("Application interface language has been changed");
             break;
 
+            case "back":
+            if (menuStackPane.getChildren().get(0).equals(menu.getLogOrSignMenuVBox())) {
+                switchMenuVBox(menu.getMainMenuVBox());
+            } else if (menuStackPane.getChildren().get(0).equals(menu.getLogInMenuVBox()) ||
+                        menuStackPane.getChildren().get(0).equals(menu.getRegisterMenuVBox())) {
+                switchMenuVBox(menu.getLogOrSignMenuVBox());
+            }
+            // switchMenuVBox(previousMenuVBox);
+            break;
+
             default:
             System.out.println("You pressed button '" + buttonName + "'");
             break;
@@ -153,16 +165,14 @@ public class MainMenuController {
 
     }
 
-    private void switchMenuVBox(VBox VBox){
-        VBox newVBox = new VBox(VBox);
-        menuVBox.getChildren().clear();
-        menuVBox.getChildren().addAll(newVBox.getChildren());
+    private void switchMenuVBox(MenuVBox VBox){
+        menuStackPane.getChildren().clear();
+        menuStackPane.getChildren().addAll(VBox);
     }
 
     private void switchLanguage(){
         menu.changeInterfaceLanguage(Main.getInterfaceLanguage());
         menu.refresh();
-
     }
 
 }
