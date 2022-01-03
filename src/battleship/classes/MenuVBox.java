@@ -121,7 +121,10 @@ public class MenuVBox extends VBox {
     }
 
     public boolean logInUser() {
-        if (authenticateUser()) {
+        String username = textFields.get(0).getText();
+        String password = passwordFields.get(0).getText();
+
+        if (authenticateUser(username, password)) {
             clearFields();
             return true;
         } else {
@@ -130,14 +133,29 @@ public class MenuVBox extends VBox {
         }
     }
 
-    private boolean authenticateUser() {
-        String username = textFields.get(0).getText();
-        String password = passwordFields.get(0).getText();
+    public boolean changePassword() {
+        String username = Main.getLogedUser().getUsername();
+        String oldPassword = passwordFields.get(0).getText();
+        String newPassword = passwordFields.get(1).getText();
+
+        if (authenticateUser(username, oldPassword)) {
+            String hashedPassword = sha256(newPassword);
+            db.updateUserPassword(username, hashedPassword);
+            clearFields();
+            return true;
+        } else {
+            clearFields();
+            return false;
+        }
+    }
+
+    private boolean authenticateUser(String username, String password) {
 
         if (fieldsAreNotEmpty(username, password)) {
             String hashedPassword = sha256(password);
             for (User user : Main.getUsers()) {
                 if (username.equals(user.getUsername()) && hashedPassword.equals(user.getPassword())) {
+                    Main.setLogedUser(user);
                     return true;
                 }
             }

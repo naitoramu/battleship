@@ -1,3 +1,5 @@
 "Name","PL","EN"
-"username","nazwa użytkownika","username"
-"password","hasło","password"
+"username","Nazwa użytkownika","Username"
+"password","Hasło","Password"
+"old-password","Stare hasło","Old password"
+"new-password","Nowe hasło","New password"

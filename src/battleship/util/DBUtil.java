@@ -148,6 +148,24 @@ public class DBUtil {
         return true;
     }
 
+    public boolean updateUserPassword(String username, String password) {
+        try {
+            PreparedStatement prepStmt = userConnection.prepareStatement("""
+                UPDATE users
+                SET password = ?
+                WHERE username = ?;
+            """);
+            prepStmt.setString(1, password);
+            prepStmt.setString(2, username);
+            prepStmt.execute();
+        } catch (SQLException e) {
+            System.err.println("Error while insert user");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public List<User> selectUsers() {
         List<User> users = new LinkedList<User>();
         ResultSet result = null;

@@ -62,7 +62,17 @@ public class MainMenuController {
     private void initializeMenu() throws IOException{
         menu = new Menu(buttonEventHandler, rootPath);
         menu.refresh();
-        menuStackPane.getChildren().addAll(menu.getMainMenuVBox());
+
+        switch (Main.getMenuStartPage()) {
+            case "main-menu":
+            menuStackPane.getChildren().addAll(menu.getMainMenuVBox());
+            break;
+
+            case "change-passwd-menu":
+            menuStackPane.getChildren().addAll(menu.getChangePasswdMenuVBox());
+            Main.setMenuStartPage("main-menu");
+            break;
+        }
     }
 
     private void handleButton(CustomButton btn) throws IOException, NoSuchAlgorithmException{
@@ -121,6 +131,7 @@ public class MainMenuController {
 
             case "log-out":
             Main.setUserLogedIn(false);
+            Main.setLogedUser(null);
             menu.refresh();
             break;
 
@@ -131,14 +142,27 @@ public class MainMenuController {
             System.out.println("Application interface language has been changed");
             break;
 
-            case "back":
-            if (menuStackPane.getChildren().get(0).equals(menu.getLogOrSignMenuVBox())) {
+            case "my-account":
+            showMyAccount(btn);
+            break;
+
+            case "submit-passwd-change":
+            boolean passwdChangeSucceeded = menu.getChangePasswdMenuVBox().changePassword();
+            if(passwdChangeSucceeded){
+                Main.loadDataFromDatabase();
                 switchMenuVBox(menu.getMainMenuVBox());
-            } else if (menuStackPane.getChildren().get(0).equals(menu.getLogInMenuVBox()) ||
+                menu.refresh();
+                System.out.println("Password changed succesfully");
+            }
+            break;
+
+            case "back":
+            if (menuStackPane.getChildren().get(0).equals(menu.getLogInMenuVBox()) ||
                         menuStackPane.getChildren().get(0).equals(menu.getRegisterMenuVBox())) {
                 switchMenuVBox(menu.getLogOrSignMenuVBox());
+            } else {
+                switchMenuVBox(menu.getMainMenuVBox());
             }
-            // switchMenuVBox(previousMenuVBox);
             break;
 
             default:
@@ -161,6 +185,16 @@ public class MainMenuController {
         Scene scene = new Scene(newRoot);
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
         scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/ranking.css").toExternalForm());
+        stageTheButtonBelongs.setScene(scene);
+
+    }
+
+    private void showMyAccount(CustomButton btn) throws IOException {
+
+        Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/myAccountView.fxml"));
+        Scene scene = new Scene(newRoot);
+        Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
+        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/myAccount.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
 
     }

@@ -18,6 +18,7 @@ public class Menu {
     private MenuVBox logInOrRegisterMenuVBox;
     private MenuVBox registerMenuVBox;
     private MenuVBox logInMenuVBox;
+    private MenuVBox changePasswdMenuVBox;
 
     public Menu(EventHandler<MouseEvent> buttonEventHandler, String rootPath) throws IOException {
 
@@ -31,6 +32,7 @@ public class Menu {
         initializeLogInOrRegisterMenu();
         initializeRegisterMenu();
         initializeLogInMenu();
+        initializeChangePasswdMenu();
     }
 
     private void initializeMainMenu() {
@@ -82,6 +84,16 @@ public class Menu {
         logInMenuVBox.addButton("back", buttonEventHandler);
     }
 
+    private void initializeChangePasswdMenu() {
+        changePasswdMenuVBox = new MenuVBox(buttonLabels, promptLabels);
+        changePasswdMenuVBox.addPasswordField("old-password");
+        changePasswdMenuVBox.addPasswordField("new-password");
+        changePasswdMenuVBox.addButton("submit-passwd-change", buttonEventHandler);
+
+        changePasswdMenuVBox.addSpaceBeforeLastButton();
+        changePasswdMenuVBox.addButton("back", buttonEventHandler);
+    }
+
     private void loadButtonLabels() throws IOException {
 
         String csvFilePath = rootPath + "/src/battleship/lang/button-labels.csv";
@@ -113,10 +125,10 @@ public class Menu {
 
     public void refresh() {
         if(Main.isUserLogedIn()) {
-            addButton("stats", 4);
+            addButton("my-account", 5);
             swapLogOutButton();
         } else {
-            removeButton("stats");
+            removeButton("my-account");
             swapLogInButton();
         }
 
@@ -163,6 +175,10 @@ public class Menu {
 
     public MenuVBox getLogInMenuVBox() {
         return logInMenuVBox;
+    }
+
+    public MenuVBox getChangePasswdMenuVBox() {
+        return changePasswdMenuVBox;
     }
 
 }

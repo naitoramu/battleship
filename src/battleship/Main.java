@@ -14,8 +14,10 @@ public class Main extends Application {
 
     private static DBUtil db = new DBUtil();
     private static List<User> users;
+    private static User logedUser = null;
 
     private static boolean userLogedIn = false;
+    private static String menuStartPage = "main-menu";
     private static String interfaceLanguage = "EN";
 
     public static void main(String[] args) throws Exception {
@@ -82,5 +84,19 @@ public class Main extends Application {
     }
     public static void setInterfaceLanguage(String interfaceLanguage) {
         Main.interfaceLanguage = interfaceLanguage;
+    }
+
+    public static User getLogedUser() {
+        return logedUser;
+    }
+    public static void setLogedUser(User logedUser) {
+        Main.logedUser = logedUser;
+    }
+
+    public static String getMenuStartPage() {
+        return menuStartPage;
+    }
+    public static void setMenuStartPage(String menuStartPage) {
+        Main.menuStartPage = menuStartPage;
     }
 }
