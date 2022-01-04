@@ -297,7 +297,8 @@
                   </Text>
                </children>
             </GridPane>
-            <Button fx:id="check" layoutX="294.0" layoutY="519.0" mnemonicParsing="false" onAction="#check" text="check" />
+            <Button fx:id="confirm_ships_location" layoutX="235.0" layoutY="518.0" mnemonicParsing="false" onAction="#confirm_ships_location" text="confirm_ships_location" />
+            <Button fx:id="go_to_menu" layoutX="637.0" layoutY="650.0" mnemonicParsing="false" onAction="#go_to_menu" text="back" />
          </children>
       </AnchorPane>
    </children>

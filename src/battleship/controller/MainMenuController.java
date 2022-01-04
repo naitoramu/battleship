@@ -71,7 +71,7 @@ public class MainMenuController {
 
         switch(buttonName){
 
-            case "pvc":
+            case "pvp":
             startGame(btn);
 
             case "rank":
