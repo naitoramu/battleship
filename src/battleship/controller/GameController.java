@@ -1,7 +1,9 @@
 package battleship.controller;
 
 import battleship.classes.Area;
+import battleship.classes.Player;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -9,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -26,84 +29,105 @@ public class GameController {
     @FXML
     AnchorPane anchorPane;
     @FXML
+    AnchorPane playerOnePane;
+    @FXML
+    AnchorPane playerTwoPane;
+    @FXML
     Rectangle rectangleFieldA;
     @FXML
     Rectangle rectangleFieldB;
     @FXML
-    Button confirm_ships_location;
+    Button playerOneReadyButton;
+    @FXML
+    Button playerTwoReadyButton;
+    @FXML
+    Label gameStatus;
 
-    ArrayList<Area> areasList = new ArrayList<>(100);//pamięć
-    ArrayList<Area> areasList2 = new ArrayList<>(100);//pamięć2
+    Player playerOne = new Player();
+    Player playerTwo = new Player();
 
-    int initial_state = 0;
-    double x_coordinate = 165;
-    double y_coordinate = 165;
-    double x_coordinate2 = 830;
-    double y_coordinate2 = 165;
-    boolean isPlayerOneTurn = true;
+    Player currentPlayer = playerOne;
+
     boolean isSetup = true;
     boolean isShipDirectionHorizontal = true;
 
     List<Short> shipsLengths = Arrays.asList(new Short[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
+    int maxPoints = 20;
+
     int cursor = 0;
-    boolean areAllShipsPlaced = false;
+    boolean isEveryShipPlaced = false;
 
-    Paint primaryColor = Color.LIGHTBLUE;
-    Paint ghostColor = Color.YELLOW;
     Paint errorColor = Color.RED;
-    //Paint shipColor = Color.BLACK;
-    Paint borderColor = Color.BLUE;
-    Paint destroyedPieceColor = Color.ORANGE;
-    Paint missColor = Color.DEEPSKYBLUE;
 
+    private void refreshGameStatus() {
+        String gameInfo = "Player " + (currentPlayer == playerOne ? "1 turn - " : "2 turn - ") +
+                (isSetup ? "place your ships" : "choose area to hit");
+        gameStatus.setText(gameInfo);
+    }
 
-    EventHandler<MouseEvent> recClickHandler = e -> {
-        Area recClicked = (Area) e.getSource();
-        if (!isSetup) {
-            if (e.getButton() == MouseButton.PRIMARY && recClicked.getState() != 1.0 && recClicked.getState() != 2.0) {
-                recClicked.setState(3);//pudło
-                recClicked.setFill(missColor);
-                recClicked.setStroke(null);
+    private void nextPlayerTurn() {
+        currentPlayer = currentPlayer == playerOne ? playerTwo : playerOne;
+        refreshGameStatus();
+    }
+
+    private void handleShot(Area clickedArea) {
+        if (clickedArea.getOwner() != currentPlayer && !clickedArea.wasHit()) {
+            clickedArea.setHit();
+            if (clickedArea.getState() == Area.State.SHIP) {
+                currentPlayer.addPoint();
+                if (currentPlayer.getScore() == maxPoints) {
+                    System.out.println(currentPlayer == playerOne ? "Player One wins" : "Player Two wins");
+                    //TODO: Stop the game here, show poits, winner etc.
+                }
             }
-            if (e.getButton() == MouseButton.PRIMARY && recClicked.getState() == 1.0) {
-                recClicked.setState(2);//trafionyFragment
-                recClicked.setFill(destroyedPieceColor);
-                recClicked.setStroke(null);
+
+            nextPlayerTurn();
+        }
+    }
+
+    EventHandler<MouseEvent> areaClickHandler = e -> {
+        Area clickedArea = (Area) e.getSource();
+        if (!isSetup) {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                handleShot(clickedArea);
             }
         } else {
             if (e.getButton() == MouseButton.PRIMARY) {
-                if(!areAllShipsPlaced){ placeShip(recClicked);}
-            }else if(e.getButton() == MouseButton.MIDDLE){
-                recClicked.setState(0);
-                recClicked.setFill(primaryColor);
-            }else {
+                if (!isEveryShipPlaced) {
+                    placeShip(clickedArea);
+                }
+            } else if (e.getButton() == MouseButton.MIDDLE) {
+                clickedArea.setState(Area.State.WATER);
+            } else {
                 isShipDirectionHorizontal = !isShipDirectionHorizontal;
-                if(!areAllShipsPlaced) {drawShipGhost(recClicked);}
+                if (!isEveryShipPlaced) {
+                    drawShipGhost(clickedArea);
+                }
             }
 
         }
     };
-    EventHandler<MouseEvent> recHoverHandler = e -> {
+
+    EventHandler<MouseEvent> areaHoverHandler = e -> {
         Area recClicked = (Area) e.getSource();
         if (isSetup) {
-            if(!areAllShipsPlaced && isPlayerOneTurn == recClicked.isBelongsToPlane1()) {drawShipGhost(recClicked);}
+            if (!isEveryShipPlaced && currentPlayer == recClicked.getOwner()) drawShipGhost(recClicked);
         }
     };
 
     public void placeShip(Area recClicked) {
-        if(!areAllShipsPlaced && isPlayerOneTurn == recClicked.isBelongsToPlane1()){
+        if (!isEveryShipPlaced && currentPlayer == recClicked.getOwner()) {
             List<Area> areaToPutShip = getAreasToPaint(recClicked);
-            List<Area> currentList = isPlayerOneTurn ? areasList : areasList2;
+            List<Area> currentList = currentPlayer.getPlayersAreas();
             int arrSize = areaToPutShip.size();
-            boolean wasErrorCode = false;//
+            boolean wasErrorCode = false;
             for (int i = 0; i < areaToPutShip.size(); i++) {//puts ship
-                if(areaToPutShip.get(i).getFill() == errorColor){
+                if (areaToPutShip.get(i).getFill() == errorColor) {
                     System.out.println("Place your ship elsewhere");
                     wasErrorCode = true;
                     break;
                 }
-                areaToPutShip.get(i).setState(1);
-                areaToPutShip.get(i).setFill(Color.BLACK);
+                areaToPutShip.get(i).setState(Area.State.SHIP);
             }
             //puts border around ship  -> state 9.0
             if (isShipDirectionHorizontal && !wasErrorCode) {
@@ -131,91 +155,59 @@ public class GameController {
 
                 for (int i = 0; i < areaToPutShip.size(); i++) {
                     if (atUpperEdge) {//border directly above and under the ship
-                        currentList.get(areaToPutShip.get(i).getRid() + 10).setState(9);
-                        currentList.get(areaToPutShip.get(i).getRid() + 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(i).getRid() + 10).setState(Area.State.FORBIDDEN);
                     } else if (atBottomEdge) {
-                        currentList.get(areaToPutShip.get(i).getRid() - 10).setState(9);
-                        currentList.get(areaToPutShip.get(i).getRid() - 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(i).getRid() - 10).setState(Area.State.FORBIDDEN);
                     } else if (!atUpperEdge && !atBottomEdge) {
-                        currentList.get(areaToPutShip.get(i).getRid() - 10).setState(9);
-                        currentList.get(areaToPutShip.get(i).getRid() - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(i).getRid() + 10).setState(9);
-                        currentList.get(areaToPutShip.get(i).getRid() + 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(i).getRid() - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(i).getRid() + 10).setState(Area.State.FORBIDDEN);
                     }
                 }
                 if (atLeftEdge) {
                     if (atUpperEdge) {
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setState(Area.State.FORBIDDEN);
                     } else if (atBottomEdge) {
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setState(Area.State.FORBIDDEN);
                     } else if (!atUpperEdge && !atBottomEdge) {
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setState(Area.State.FORBIDDEN);
                     }
                 } else if (atRightEgde) {//left border
                     if (atUpperEdge) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(Area.State.FORBIDDEN);
                     } else if (atBottomEdge) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(Area.State.FORBIDDEN);
                     } else if (!atUpperEdge && !atBottomEdge) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(Area.State.FORBIDDEN);
                     }
                 } else if (!atLeftEdge && !atRightEgde) {
                     if (atUpperEdge) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setState(Area.State.FORBIDDEN);
                     } else if (atBottomEdge) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(Area.State.FORBIDDEN);
                     } else if (!atUpperEdge && !atBottomEdge) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1 - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 1 + 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 1 + 10).setState(Area.State.FORBIDDEN);
                     }
                 }
-            } else if(!isShipDirectionHorizontal && !wasErrorCode){
+            } else if (!isShipDirectionHorizontal && !wasErrorCode) {
                 //when ship direction VERTICAL
                 boolean atLeftEdge = false;
                 boolean atRightEgde = false;
@@ -241,161 +233,120 @@ public class GameController {
 
                 for (int i = 0; i < areaToPutShip.size(); i++) {
                     if (atLeftEdge) {
-                        currentList.get(areaToPutShip.get(i).getRid() + 1).setState(9);
-                        currentList.get(areaToPutShip.get(i).getRid() + 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(i).getRid() + 1).setState(Area.State.FORBIDDEN);
                     } else if (atRightEgde) {
-                        currentList.get(areaToPutShip.get(i).getRid() - 1).setState(9);
-                        currentList.get(areaToPutShip.get(i).getRid() - 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(i).getRid() - 1).setState(Area.State.FORBIDDEN);
                     } else if (!atLeftEdge && !atRightEgde) {
-                        currentList.get(areaToPutShip.get(i).getRid() - 1).setState(9);
-                        currentList.get(areaToPutShip.get(i).getRid() - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(i).getRid() + 1).setState(9);
-                        currentList.get(areaToPutShip.get(i).getRid() + 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(i).getRid() - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(i).getRid() + 1).setState(Area.State.FORBIDDEN);
                     }
                 }
                 if (atUpperEdge) {
                     if (atLeftEdge) {
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setState(Area.State.FORBIDDEN);
                     } else if (atRightEgde) {
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setState(Area.State.FORBIDDEN);
                     } else if (!atLeftEdge && !atRightEgde) {
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setState(Area.State.FORBIDDEN);
                     }
                 } else if (atBottomEdge) {
                     if (atLeftEdge) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(Area.State.FORBIDDEN);
                     } else if (atRightEgde) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(Area.State.FORBIDDEN);
                     } else if (!atLeftEdge && !atRightEgde) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(Area.State.FORBIDDEN);
                     }
                 } else if (!atUpperEdge && !atBottomEdge) {
                     if (atLeftEdge) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setState(Area.State.FORBIDDEN);
                     } else if (atRightEgde) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setState(Area.State.FORBIDDEN);
                     } else if (!atLeftEdge && !atRightEgde) {
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(9);
-                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setFill(borderColor);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setState(9);
-                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setFill(borderColor);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10 - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(0).getRid() - 10 + 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 - 1).setState(Area.State.FORBIDDEN);
+                        currentList.get(areaToPutShip.get(arrSize - 1).getRid() + 10 + 1).setState(Area.State.FORBIDDEN);
                     }
                 }
             }
-            if(cursor < shipsLengths.size()-1 && !wasErrorCode){
+            if (cursor < shipsLengths.size() - 1 && !wasErrorCode) {
                 System.out.println("Statek z indexu: " + cursor + "\t " + shipsLengths.get(cursor) + "-masztowiec");
                 cursor++;
-            }else if (cursor == shipsLengths.size()-1){
+            } else if (cursor == shipsLengths.size() - 1) {
                 cursor = shipsLengths.size() - 1;
                 System.out.println("Statek z indexu: " + cursor + "\t " + shipsLengths.get(cursor) + "-masztowiec");
                 System.out.print("WSZYSTKIE STATKI NA POLU BITWY dla gracza nr");
-                if(isPlayerOneTurn){
+                if (currentPlayer == playerOne) {
                     System.out.print(" 1.");
                     System.out.println();
-                }else{
+                } else {
                     System.out.print(" 2.");
                     System.out.println();
                 }
-                areAllShipsPlaced = true;
+                isEveryShipPlaced = true;
             }
         }
     }
-
-
 
     public List<Area> getAreasToPaint(Area recClicked) {
         List<Area> occupiedAreas = new ArrayList<>();
         int rid = recClicked.getRid();
-        List<Area> currentList = isPlayerOneTurn ? areasList : areasList2;
-            if (isShipDirectionHorizontal) {
-                while (rid < recClicked.getRid() + shipsLengths.get(cursor) && rid / 10 == recClicked.getRid() / 10 && currentList.get(rid).getState() != 1.0 && currentList.get(rid).getState() != 9.0) {
-                    occupiedAreas.add(currentList.get(rid));
-                    rid += 1;
-                }
-            } else {
-                while (rid < recClicked.getRid() + shipsLengths.get(cursor) * 10 && rid < 100 && currentList.get(rid).getState() != 1.0 && currentList.get(rid).getState() != 9.0) {
-                    occupiedAreas.add(currentList.get(rid));
-                    rid += 10;
-                }
+        List<Area> currentList = currentPlayer.getPlayersAreas();
+        if (isShipDirectionHorizontal) {
+            while (rid < recClicked.getRid() + shipsLengths.get(cursor) && rid / 10 == recClicked.getRid() / 10 && currentList.get(rid).getState() != Area.State.SHIP && currentList.get(rid).getState() != Area.State.FORBIDDEN) {
+                occupiedAreas.add(currentList.get(rid));
+                rid += 1;
             }
+        } else {
+            while (rid < recClicked.getRid() + shipsLengths.get(cursor) * 10 && rid < 100 && currentList.get(rid).getState() != Area.State.SHIP && currentList.get(rid).getState() != Area.State.FORBIDDEN) {
+                occupiedAreas.add(currentList.get(rid));
+                rid += 10;
+            }
+        }
         return occupiedAreas;
     }
 
 
-
     public void clearGhosts() {
-        List<Area> currentList = isPlayerOneTurn ? areasList : areasList2;
-        for (Area rec : currentList) {
-            Paint recColor = rec.getFill();
-            if (recColor == ghostColor || recColor == errorColor) {
-                rec.setFill(primaryColor);
+        for (Area area : currentPlayer.getPlayersAreas()) {
+            Area.State currentState = area.getState();
+            if (currentState == Area.State.ERROR || currentState == Area.State.GHOST) {
+                area.setState(Area.State.WATER);
             }
         }
     }
 
-    public void drawShipGhost(Area recClicked) {
-        List<Area> areasToPaint = getAreasToPaint(recClicked);
-        Paint shipColor = (areasToPaint.size() < shipsLengths.get(cursor)) ? errorColor : ghostColor;
+    public void drawShipGhost(Area areaClicked) {
+        List<Area> areasToPaint = getAreasToPaint(areaClicked);
+        Area.State stateToSet = (areasToPaint.size() < shipsLengths.get(cursor)) ? Area.State.ERROR : Area.State.GHOST;
         clearGhosts();
         for (Area rec : areasToPaint) {
-            rec.setFill(shipColor);
+            rec.setState(stateToSet);
         }
     }
 
     public void initialize() {
-        printMatrixOfNames();
-        fillStorage();
-        createBattleField();
-
-
-        //printStorageAsStates();
-        //clickingAtBattlefield_AssociationOfEventHandlersForRectangles();
-
-
+        //printMatrixOfNames();
+        playerTwoReadyButton.setVisible(false);
+        setupBattleFields();
+        refreshGameStatus();
     }
 
     public String getHumanReadableCoordinates(int col, int row) {
@@ -415,84 +366,67 @@ public class GameController {
         }
     }
 
-    public void fillStorage() {
-        for (int row = 0; row < 10; row++) {
-            for (int col = 0; col < 10; col++) {
-                Area rec = new Area(x_coordinate + 30 * col, y_coordinate + 30 * row, 30, 30, initial_state, 10 * row + col, getHumanReadableCoordinates(col, row), true, primaryColor);
-                rec.addEventHandler(MouseEvent.MOUSE_CLICKED, recClickHandler);
-                rec.addEventHandler(MouseEvent.MOUSE_ENTERED, recHoverHandler);
-                areasList.add(rec);
-            }
-        }
-
-        for (int row = 0; row < 10; row++) {
-            for (int col = 0; col < 10; col++) {
-                Area rec = new Area(x_coordinate2 + 30 * col, y_coordinate2 + 30 * row, 30, 30, initial_state, 10 * row + col, getHumanReadableCoordinates(col, row), false, primaryColor);
-                rec.addEventHandler(MouseEvent.MOUSE_CLICKED, recClickHandler);
-                rec.addEventHandler(MouseEvent.MOUSE_ENTERED, recHoverHandler);
-                areasList2.add(rec);
-            }
-        }
-    }
 
     public void printStorageAsStates() {
         System.out.println("********************************");
         System.out.print("printStorageAsStates");
-        ArrayList<Area> currList = isPlayerOneTurn ? areasList : areasList2;
         System.out.print(" PlayersOneTurn  1 ");
         System.out.println();
         System.out.println("********************************");
         int i = 0;
-        while (i < areasList.size()) {
-            System.out.print(/*areasList.get(i).getRidAsCoor() + "-" + */currList.get(i).getState() + "\t");
+        while (i < currentPlayer.getPlayersAreas().size()) {
+            System.out.print(currentPlayer.getPlayersAreas().get(i).getState() + "\t");
             if ((i + 1) % 10 == 0) System.out.println();
             i += 1;
         }
-
-
     }
 
-    public void createBattleField() {
-        //if(isPlayerOneTurn){
-            for (Area rec : areasList) {
-                anchorPane.getChildren().add(rec);
+    public void prepareAreas(Player player, AnchorPane playersBoardPane) {
+        int xOffset = 52;
+        int yOffset = 70;
+        int areaSize = 30;
+
+        ObservableList boardsAreas = playersBoardPane.getChildren();
+        ArrayList<Area> areas = new ArrayList<>(100);
+        for (int row = 0; row < 10; row++) {
+            for (int col = 0; col < 10; col++) {
+                Area newArea = new Area(xOffset + areaSize * col, yOffset + areaSize * row, areaSize, areaSize, 10 * row + col, getHumanReadableCoordinates(col, row), player);
+                newArea.addEventHandler(MouseEvent.MOUSE_CLICKED, areaClickHandler);
+                newArea.addEventHandler(MouseEvent.MOUSE_ENTERED, areaHoverHandler);
+
+                areas.add(newArea);
+                boardsAreas.add(newArea);
             }
-       //}else{
-            for (Area rec : areasList2) {
-                anchorPane.getChildren().add(rec);
+        }
+        player.setPlayersAreas(areas);
+    }
+
+    public void setupBattleFields() {
+        prepareAreas(playerOne, playerOnePane);
+        prepareAreas(playerTwo, playerTwoPane);
+    }
+
+    public void playerReady() {
+        boardSetupCompleteHandler(currentPlayer.getPlayersAreas());
+        if (isEveryShipPlaced) {
+            if (currentPlayer == playerOne) {
+                isEveryShipPlaced = false;
+                cursor = 0;
+                playerTwoReadyButton.setVisible(true);
+                playerOneReadyButton.setVisible(false);
+            } else {
+                isSetup = false;
+                playerTwoReadyButton.setVisible(false);
+                System.out.println("START ROZGRYWKI");
             }
-       // }
-
+            nextPlayerTurn();
+        }
     }
 
-
-    public void confirm_ships_location() {
-        if( isPlayerOneTurn && areAllShipsPlaced){
-            printStorageAsStates();
-            makeAllSquaresBlue();
-            printStorageAsStates();
-            isPlayerOneTurn = false;
-            areAllShipsPlaced = false;
-            cursor = 0;
-            confirm_ships_location.setLayoutX(855);
-            confirm_ships_location.setText("confirm_ships_location & start the game");
-
-        }
-        if( !isPlayerOneTurn && areAllShipsPlaced){
-            makeAllSquaresBlue();
-            printStorageAsStates();
-            makeAllSquaresBlue();
-            isSetup = false;
-            confirm_ships_location.setVisible(false);
-            System.out.println("START ROZGRYWKI");
-        }
-
-    }
-
-    private void makeAllSquaresBlue(){
-        ArrayList<Area> currList = isPlayerOneTurn ? areasList : areasList2;
-        for(Area element: currList) {
-            element.setFill(primaryColor);
+    private void boardSetupCompleteHandler(ArrayList<Area> boardsAreas) {
+        for (Area area : boardsAreas) {
+            if (area.getState() != Area.State.SHIP) area.setState(Area.State.WATER);
+            area.setStateHidden(true);
         }
     }
 
@@ -506,9 +440,7 @@ public class GameController {
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
         scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/mainMenu.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
-
     }
-
 
     public void justExit() {
         Platform.exit();
