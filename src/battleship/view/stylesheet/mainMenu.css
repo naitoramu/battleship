@@ -1,15 +1,36 @@
+@font-face {
+    src: url("font/VT323-Regular.ttf");
+}
+
+#container {
+    -fx-background-color: linear-gradient(to bottom, #0d7ee0, #82c5ff);
+    -fx-font-family: "VT323";
+}
+
+#titleLabel {
+    -fx-text-fill: white;
+    -fx-font-size: 150px;
+}
+
+#titleLabel .text {
+    -fx-stroke-width: 3px;
+    -fx-stroke: black;
+}
+
 CustomButton {
-    -fx-background-color: black;
-    -fx-text-fill: rgb(88, 241, 255);
+    -fx-background-color: linear-gradient(to bottom, #0d7ee0, #82c5ff);
+    -fx-text-fill: linear-gradient(to bottom, #2e3e69, #1e2c3f);
+    -fx-font-size: 32px;
+    -fx-border-radius: 6px;
+    -fx-border-width: 3px;
+    -fx-border-color: linear-gradient(to bottom, #2e3e69, #1e2c3f);
+    -fx-background-insets: 1px;
 }
 
 CustomButton:hover {
-    -fx-background-color: rgb(88, 241, 255);
+    -fx-background-color: linear-gradient(to top, #0d7ee0, #82c5ff);
     -fx-text-fill: black;
-}
-
-StackPane {
-    -fx-background-color: rgb(70, 94, 98);
+    -fx-border-color: black;
 }
 
 MenuVBox {
@@ -19,9 +40,6 @@ MenuVBox {
 
 CustomTextField, CustomPasswordField {
     -fx-max-width: 400;
-}
-
-#titleLabel {
-    -fx-text-fill: white;
-    -fx-font-size: 64px;
+    -fx-height: 50;
+    -fx-font-size: 32px;
 }

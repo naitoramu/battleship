@@ -33,8 +33,8 @@ public class MenuVBox extends VBox {
     public MenuVBox(CSVDictReader buttonLabels, CSVDictReader promptLabels) {
         db = Main.getDB();
 
-        this.buttonWidth = 300;
-        this.buttonHeight = 50;
+        this.buttonWidth = 330;
+        this.buttonHeight = 45;
         this.textFieldWidth = 400;
         this.textFieldHeight = 30;
 

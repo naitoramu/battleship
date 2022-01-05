@@ -25,7 +25,7 @@ public class RankingController {
     @FXML
     private Button backButton;
     @FXML
-    private Label titleLable;
+    private Label titleLabel;
     @FXML
     private ChoiceBox<String> categoryChoiceBox;
     @FXML
@@ -48,6 +48,7 @@ public class RankingController {
 
         loadButtonLabels();
         backButton.setText(buttonLabels.getLabelByName("back").get(Main.getInterfaceLanguage()));
+        titleLabel.setText(buttonLabels.getLabelByName("rank").get(Main.getInterfaceLanguage()));
 
         ranking = new Ranking(rankingTableView.widthProperty());
 

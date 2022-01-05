@@ -1,16 +1,48 @@
-#username-column {
-    -fx-width: 100%;
+@font-face {
+    src: url("font/VT323-Regular.ttf");
+}
+
+#container {
+    -fx-background-color: linear-gradient(to bottom, #0d7ee0, #82c5ff);
+    -fx-font-family: "VT323";
+}
+
+#titleLabel {
+    -fx-text-fill: white;
+    -fx-font-size: 105px;
+}
+
+#titleLabel .text {
+    -fx-stroke-width: 2px;
+    -fx-stroke: black;
+}
+
+#backButton {
+    -fx-font-size: 32px;
+}
+
+#categoryChoiceBox {
+    -fx-font-size: 32px;
+}
+
+.table-view {
+    -fx-border-radius: 6px;
+    -fx-border-width: 3px;
+    -fx-background-insets: 5px;
+    -fx-border-color: linear-gradient(to bottom, #2e3e69, #1e2c3f);
 }
 
 .table-view .column-header-background{
-    -fx-background-color: linear-gradient(to bottom, #1dbbdd44, #93f9b944);
+    -fx-background-color: linear-gradient(to bottom, #0d7ee0, #82c5ff);
 }
 
 .table-view .column-header, .table-view .column-header-background .filler {
-    -fx-background-color: rgba(200,200,200,0.2);
+    -fx-font-size: 40px;
+    -fx-background-color: rgba(130, 197, 255, 0.2);
 }
 
 .table-view .table-cell{
+    -fx-font-size: 32px;
     -fx-border-color: transparent;
     -fx-padding: 2 0 2 10px;
 }
@@ -27,4 +59,19 @@
     -fx-background-color: #1dbbdd11;
     -fx-background-insets: 0, 0 0 1 0;
     -fx-padding: 0.0em;
+}
+
+Button, ChoiceBox {
+    -fx-background-color: linear-gradient(to bottom, #0d7ee0, #82c5ff);
+    -fx-text-fill: linear-gradient(to bottom, #2e3e69, #1e2c3f);
+    -fx-font-size: 32px;
+    -fx-border-radius: 6px;
+    -fx-border-width: 3px;
+    -fx-border-color: linear-gradient(to bottom, #2e3e69, #1e2c3f);
+}
+
+Button:hover, ChoiceBox:hover {
+    -fx-background-color: linear-gradient(to top, #0d7ee0, #82c5ff);
+    -fx-text-fill: black;
+    -fx-border-color: black;
 }
