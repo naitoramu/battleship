@@ -304,11 +304,16 @@
                   </GridPane>
                </children>
             </AnchorPane>
-            <Button layoutX="622.0" layoutY="653.0" mnemonicParsing="false" onAction="#justExit" text="Exit" />
+            <Button layoutX="580.0" layoutY="653.0" mnemonicParsing="false" onAction="#justExit" prefHeight="26.0" prefWidth="120.0" text="Exit" />
             <Button fx:id="playerOneReadyButton" layoutX="255.0" layoutY="518.0" mnemonicParsing="false" onAction="#playerReady" text="Player A Ready" />
-            <Button fx:id="go_to_menu" layoutX="620.0" layoutY="627.0" mnemonicParsing="false" onAction="#go_to_menu" text="back" />
+            <Button fx:id="go_to_menu" layoutX="580.0" layoutY="626.0" mnemonicParsing="false" onAction="#go_to_menu" prefHeight="26.0" prefWidth="120.0" text="Back" />
             <Button fx:id="playerTwoReadyButton" layoutX="919.0" layoutY="518.0" mnemonicParsing="false" onAction="#playerReady" text="Player B Ready" />
             <Label fx:id="gameStatus" layoutX="506.0" layoutY="64.0" prefHeight="18.0" prefWidth="266.0" textAlignment="CENTER" />
+            <Button fx:id="startButton" layoutX="580.0" layoutY="579.0" mnemonicParsing="false" onAction="#handleStartButton" prefHeight="46.0" prefWidth="120.0" text="Start Game">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
          </children>
       </AnchorPane>
    </children>

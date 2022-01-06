@@ -8,23 +8,27 @@ import javafx.scene.shape.Rectangle;
 
 public class Area extends Rectangle {
     public enum State {
-        WATER, SHIP, GHOST, FORBIDDEN, ERROR
+        WATER, SHIP, FORBIDDEN
     }
 
     private State state;
-    private final int rid;
-    private final String ridAsCoor;
     private boolean isStateHidden;
+    private boolean isHighlited;
     private boolean wasHit;
     private final Player owner;
+    private final Coordinates coordinates;
 
-    public Area(double x, double y, double width, double height, int rid, String ridAsCoor, Player owner) {
+    public Area(Coordinates coordinates, double x, double y, double width, double height, Player owner) {
         super(x, y, width, height);
         this.state = State.WATER;
-        this.rid = rid;
-        this.ridAsCoor = ridAsCoor;
         this.isStateHidden = false;
         this.owner = owner;
+        this.coordinates = coordinates;
+        refreshAppearance();
+    }
+
+    public void setHighlited(boolean highlited) {
+        isHighlited = highlited;
         refreshAppearance();
     }
 
@@ -56,19 +60,15 @@ public class Area extends Rectangle {
         refreshAppearance();
     }
 
-    public int getRid() {
-        return rid;
-    }
-
     public void refreshAppearance() {
         Paint newFill;
         if (isStateHidden) {
             newFill = Color.LIGHTBLUE;
+        } else if (isHighlited) {
+            newFill = state == State.WATER ? Color.YELLOW : Color.RED;
         } else {
             newFill = switch (this.state) {
                 case SHIP -> wasHit ? Color.ORANGE : Color.BLACK;
-                case ERROR -> Color.RED;
-                case GHOST -> Color.YELLOW;
                 case FORBIDDEN -> Color.BLUE;
                 case WATER -> wasHit ? Color.DEEPSKYBLUE : Color.LIGHTBLUE;
             };
@@ -77,12 +77,7 @@ public class Area extends Rectangle {
         this.setFill(newFill);
     }
 
-    @Override
-    public String toString() {
-        return "Area{" +
-                "state=" + state +
-                ", rid=" + rid +
-                ", ridAsCoor='" + ridAsCoor + '\'' +
-                '}';
+    public Coordinates getCoordinates() {
+        return coordinates;
     }
 }

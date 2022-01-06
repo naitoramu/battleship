@@ -159,13 +159,13 @@ public class MainMenuController {
         Parent newRoot = fxmlLoader.load();
 
         GameController controller = fxmlLoader.getController();
-        controller.setPlayers(new Player(isPlayerOneAI), new Player(isPlayerTwoAI));
-        controller.startGame();
+        controller.setPlayers(new Player(isPlayerOneAI, controller), new Player(isPlayerTwoAI, controller));
 
         Scene scene = new Scene(newRoot);
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
         scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/game.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
+        controller.startGame();
     }
 
     private void showRanking(CustomButton btn) throws IOException {

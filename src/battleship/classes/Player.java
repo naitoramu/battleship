@@ -1,27 +1,30 @@
 package battleship.classes;
 
-import java.util.ArrayList;
+import battleship.controller.GameController;
+
+import java.util.Map;
 
 public class Player {
     private Integer points;
-    private ArrayList<Area> playersAreas;
+    private final Board board;
     private final boolean isAI;
 
-    public Player(boolean isAI) {
+    public Player(boolean isAI, GameController game) {
         this.points = 0;
         this.isAI = isAI;
+        this.board = new Board(this, game);
     }
 
     public boolean isAI() {
         return isAI;
     }
 
-    public void setPlayersAreas(ArrayList<Area> playersAreas) {
-        this.playersAreas = playersAreas;
+    public Integer getPoints() {
+        return points;
     }
 
-    public ArrayList<Area> getPlayersAreas() {
-        return playersAreas;
+    public void setPoints(Integer points) {
+        this.points = points;
     }
 
     public void addPoint() {
@@ -32,4 +35,7 @@ public class Player {
         return points;
     }
 
+    public Board getBoard() {
+        return board;
+    }
 }
