@@ -1,5 +1,6 @@
 package battleship.controller;
 
+import battleship.classes.AI;
 import battleship.classes.Area;
 import battleship.classes.Player;
 import javafx.application.Platform;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class GameController {
     @FXML
@@ -43,12 +45,20 @@ public class GameController {
     @FXML
     Label gameStatus;
 
-    Player playerOne = new Player();
-    Player playerTwo = new Player();
+    Player playerOne;
+    Player playerTwo;
 
-    Player currentPlayer = playerOne;
+    AI ai = new AI();
+
+    public void setPlayers(Player playerOne, Player playerTwo) {
+        this.playerOne = playerOne;
+        this.playerTwo = playerTwo;
+    }
+
+    Player currentPlayer;
 
     boolean isSetup = true;
+    boolean isGameFinished = false;
     boolean isShipDirectionHorizontal = true;
 
     List<Short> shipsLengths = Arrays.asList(new Short[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
@@ -60,14 +70,28 @@ public class GameController {
     Paint errorColor = Color.RED;
 
     private void refreshGameStatus() {
-        String gameInfo = "Player " + (currentPlayer == playerOne ? "1 turn - " : "2 turn - ") +
-                (isSetup ? "place your ships" : "choose area to hit");
+        String gameInfo;
+        if (isGameFinished) {
+            gameInfo = "Player " + (currentPlayer == playerOne ? "1 " : "2 ") + "wins";
+        } else {
+            gameInfo = "Player " + (currentPlayer == playerOne ? "1 turn - " : "2 turn - ") +
+                    (isSetup ? "place your ships" : "choose area to hit");
+
+        }
         gameStatus.setText(gameInfo);
     }
 
     private void nextPlayerTurn() {
         currentPlayer = currentPlayer == playerOne ? playerTwo : playerOne;
         refreshGameStatus();
+        if (currentPlayer.isAI() && !isGameFinished) {
+            if (isSetup) {
+                ai.placeShips(currentPlayer.getPlayersAreas(), shipsLengths);
+                isEveryShipPlaced = true;
+            } else {
+                handleShot(ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getPlayersAreas()));
+            }
+        }
     }
 
     private void handleShot(Area clickedArea) {
@@ -77,7 +101,7 @@ public class GameController {
                 currentPlayer.addPoint();
                 if (currentPlayer.getScore() == maxPoints) {
                     System.out.println(currentPlayer == playerOne ? "Player One wins" : "Player Two wins");
-                    //TODO: Stop the game here, show poits, winner etc.
+                    isGameFinished = true;
                 }
             }
 
@@ -87,24 +111,25 @@ public class GameController {
 
     EventHandler<MouseEvent> areaClickHandler = e -> {
         Area clickedArea = (Area) e.getSource();
-        if (!isSetup) {
-            if (e.getButton() == MouseButton.PRIMARY) {
-                handleShot(clickedArea);
-            }
-        } else {
-            if (e.getButton() == MouseButton.PRIMARY) {
-                if (!isEveryShipPlaced) {
-                    placeShip(clickedArea);
+        if (!isGameFinished) {
+            if (!isSetup) {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    handleShot(clickedArea);
                 }
-            } else if (e.getButton() == MouseButton.MIDDLE) {
-                clickedArea.setState(Area.State.WATER);
             } else {
-                isShipDirectionHorizontal = !isShipDirectionHorizontal;
-                if (!isEveryShipPlaced) {
-                    drawShipGhost(clickedArea);
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    if (!isEveryShipPlaced) {
+                        placeShip(clickedArea);
+                    }
+                } else if (e.getButton() == MouseButton.MIDDLE) {
+                    clickedArea.setState(Area.State.WATER);
+                } else {
+                    isShipDirectionHorizontal = !isShipDirectionHorizontal;
+                    if (!isEveryShipPlaced) {
+                        drawShipGhost(clickedArea);
+                    }
                 }
             }
-
         }
     };
 
@@ -342,11 +367,17 @@ public class GameController {
         }
     }
 
-    public void initialize() {
+    public void startGame() {
         //printMatrixOfNames();
         playerTwoReadyButton.setVisible(false);
+        currentPlayer = playerOne;
         setupBattleFields();
         refreshGameStatus();
+
+        if (currentPlayer.isAI()) {
+            ai.placeShips(currentPlayer.getPlayersAreas(), shipsLengths);
+            isEveryShipPlaced = true;
+        }
     }
 
     public String getHumanReadableCoordinates(int col, int row) {
@@ -407,8 +438,8 @@ public class GameController {
     }
 
     public void playerReady() {
-        boardSetupCompleteHandler(currentPlayer.getPlayersAreas());
         if (isEveryShipPlaced) {
+            boardSetupCompleteHandler(currentPlayer.getPlayersAreas());
             if (currentPlayer == playerOne) {
                 isEveryShipPlaced = false;
                 cursor = 0;
