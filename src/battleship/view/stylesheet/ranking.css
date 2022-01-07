@@ -26,39 +26,39 @@
 }
 
 .table-view {
+    -fx-background-color: transparent;
     -fx-border-radius: 6px;
     -fx-border-width: 3px;
-    -fx-background-insets: 5px;
+    -fx-background-insets: 0px;
     -fx-border-color: linear-gradient(to bottom, #2e3e69, #1e2c3f);
 }
 
 .table-view .column-header-background{
-    -fx-background-color: linear-gradient(to bottom, #0d7ee0, #82c5ff);
+    -fx-font-size: 40px;
+    -fx-background-color: #0d7ee0;
 }
 
-.table-view .column-header, .table-view .column-header-background .filler {
-    -fx-font-size: 40px;
-    -fx-background-color: rgba(130, 197, 255, 0.2);
+.table-view .column-header {
+    -fx-background-color: transparent;
 }
 
 .table-view .table-cell{
+    -fx-background-color: #82c5ff;
     -fx-font-size: 32px;
-    -fx-border-color: transparent;
     -fx-padding: 2 0 2 10px;
 }
+
+.table-row-cell {
+    -fx-border-width: 1 0 0 0px;
+    -fx-border-color: black;
+}
 .table-row-cell:hover {
-    -fx-background-color: #93f9b911;
-    -fx-text-background-color: red;
+    -fx-text-background-color: #0d7ee0;
 }
-.table-row-cell:odd{
-    -fx-background-color: #93f9b911;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
-}
-.table-row-cell:even{
-    -fx-background-color: #1dbbdd11;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
+
+.table-column {
+    -fx-border-width: 0 0 0 1px;
+    -fx-border-color: black;
 }
 
 Button, ChoiceBox {
@@ -68,6 +68,7 @@ Button, ChoiceBox {
     -fx-border-radius: 6px;
     -fx-border-width: 3px;
     -fx-border-color: linear-gradient(to bottom, #2e3e69, #1e2c3f);
+    -fx-background-insets: 1px;
 }
 
 Button:hover, ChoiceBox:hover {

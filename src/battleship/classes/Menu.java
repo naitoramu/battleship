@@ -125,9 +125,13 @@ public class Menu {
 
     public void refresh() {
         if(Main.isUserLogedIn()) {
+            addButton("pvc", 0);
+            addButton("pvp", 1);
             addButton("my-account", 5);
             swapLogOutButton();
         } else {
+            removeButton("pvc");
+            removeButton("pvp");
             removeButton("my-account");
             swapLogInButton();
         }

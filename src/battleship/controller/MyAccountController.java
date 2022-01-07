@@ -53,7 +53,7 @@ public class MyAccountController {
     }
 
     private void loadAvatar() throws FileNotFoundException {
-        FileInputStream input = new FileInputStream(rootPath + "/src/battleship/avatar/avatar-0.png");
+        FileInputStream input = new FileInputStream(rootPath + "/src/battleship/avatar/human-avatar.png");
         avatar = new Image(input);
     }
 

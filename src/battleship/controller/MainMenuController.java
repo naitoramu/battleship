@@ -72,6 +72,16 @@ public class MainMenuController {
             menuStackPane.getChildren().addAll(menu.getChangePasswdMenuVBox());
             Main.setMenuStartPage("main-menu");
             break;
+
+            case "login-menu":
+            menuStackPane.getChildren().addAll(menu.getLogInMenuVBox());
+            Main.setMenuStartPage("main-menu");
+            break;
+
+            case "register-menu":
+            menuStackPane.getChildren().addAll(menu.getRegisterMenuVBox());
+            Main.setMenuStartPage("main-menu");
+            break;
         }
     }
 
@@ -82,10 +92,15 @@ public class MainMenuController {
         switch(buttonName){
 
             case "pvc":
-            startGame(btn);
+            case "pvp":
+            case "cvc":
+            Main.setGameMode(buttonName);
+            showPlayersSelection(btn);
+            break;
 
             case "rank":
             showRanking(btn);
+            break;
 
             case "change-lang":
             switchMenuVBox(menu.getChangeLangMenuVBox());
@@ -111,21 +126,31 @@ public class MainMenuController {
             case "register":
             boolean registrationSucceeded = menu.getRegisterMenuVBox().registerNewUser();
             if(registrationSucceeded){
-                switchMenuVBox(menu.getMainMenuVBox());
-                Main.setUserLogedIn(true);
-                menu.refresh();
-                Main.loadDataFromDatabase();
+            
                 System.out.println("Registration succeeded");
+                Main.loadDataFromDatabase();
+                if(Main.isAuthenticatePlayerTwo()) {
+                    showPlayersSelection(btn);
+                } else {
+                    switchMenuVBox(menu.getMainMenuVBox());
+                    menu.refresh();
+                }
+                // menu.refresh();
             }
             break;
 
             case "log-in":
             boolean logInSucceeded = menu.getLogInMenuVBox().logInUser();
             if(logInSucceeded){
-                switchMenuVBox(menu.getMainMenuVBox());
-                Main.setUserLogedIn(true);
-                menu.refresh();
+                
                 System.out.println("Log in succeeded");
+                if(Main.isAuthenticatePlayerTwo()) {
+                    showPlayersSelection(btn);
+                } else {
+                    // Main.loadDataFromDatabase();
+                    switchMenuVBox(menu.getMainMenuVBox());
+                    menu.refresh();
+                }
             }
             break;
 
@@ -171,11 +196,12 @@ public class MainMenuController {
         }
     }
 
-    private void startGame(CustomButton btn) throws IOException{
-        Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/gameView.fxml"));
+    private void showPlayersSelection(CustomButton btn) throws IOException {
+
+        Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/playersSelection.fxml"));
         Scene scene = new Scene(newRoot);
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
-        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/game.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/playersSelection.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
     }
 

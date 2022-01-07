@@ -15,8 +15,14 @@ public class Main extends Application {
     private static DBUtil db = new DBUtil();
     private static List<User> users;
     private static User logedUser = null;
+    private static User PlayerOne = null;
+    private static User PlayerTwo = null;
 
     private static boolean userLogedIn = false;
+    private static boolean playerOneIsHuman;
+    private static boolean playerTwoIsHuman;
+    private static boolean authenticatePlayerTwo = false;
+    private static String gameMode = null;
     private static String menuStartPage = "main-menu";
     private static String interfaceLanguage = "EN";
 
@@ -98,5 +104,47 @@ public class Main extends Application {
     }
     public static void setMenuStartPage(String menuStartPage) {
         Main.menuStartPage = menuStartPage;
+    }
+
+    public static String getGameMode() {
+        return gameMode;
+    }
+    public static void setGameMode(String gameMode) {
+        Main.gameMode = gameMode;
+    }
+
+    public static boolean isPlayerTwoIsHuman() {
+        return playerTwoIsHuman;
+    }
+    public static void setPlayerTwoIsHuman(boolean playerTwoIsHuman) {
+        Main.playerTwoIsHuman = playerTwoIsHuman;
+    }
+
+    public static boolean isPlayerOneIsHuman() {
+        return playerOneIsHuman;
+    }
+    public static void setPlayerOneIsHuman(boolean playerOneIsHuman) {
+        Main.playerOneIsHuman = playerOneIsHuman;
+    }
+
+    public static User getPlayerTwo() {
+        return PlayerTwo;
+    }
+    public static void setPlayerTwo(User playerTwo) {
+        PlayerTwo = playerTwo;
+    }
+
+    public static User getPlayerOne() {
+        return PlayerOne;
+    }
+    public static void setPlayerOne(User playerOne) {
+        PlayerOne = playerOne;
+    }
+
+    public static boolean isAuthenticatePlayerTwo() {
+        return authenticatePlayerTwo;
+    }
+    public static void setAuthenticatePlayerTwo(boolean afterAuthRedirectToPvP) {
+        Main.authenticatePlayerTwo = afterAuthRedirectToPvP;
     }
 }

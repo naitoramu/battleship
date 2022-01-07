@@ -108,7 +108,6 @@ public class MenuVBox extends VBox {
     }
 
     public void addSpaceBeforeLastButton() {
-        // this.setVgrow(spaceBeforeLastButton, Priority.ALWAYS);
         spaceBeforeLastButton.setPrefHeight(buttonHeight*1);
         this.getChildren().add(spaceBeforeLastButton);
     }
@@ -155,8 +154,19 @@ public class MenuVBox extends VBox {
             String hashedPassword = sha256(password);
             for (User user : Main.getUsers()) {
                 if (username.equals(user.getUsername()) && hashedPassword.equals(user.getPassword())) {
-                    Main.setLogedUser(user);
+                    if(Main.isAuthenticatePlayerTwo()) {
+                        if(user.equals(Main.getLogedUser())) {
+                            System.out.println("Duplicate players not allowed");
+                            return false;
+                        } else {
+                            Main.setPlayerTwo(user);
+                        }
+                    } else {
+                        Main.setUserLogedIn(true);
+                        Main.setLogedUser(user);
+                    }
                     return true;
+                    // TODO Add condition playerTwo =! logedUser
                 }
             }
         } else {
