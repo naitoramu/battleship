@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import battleship.Main;
 import battleship.classes.CSVDictReader;
 import battleship.classes.CustomTableColumn;
+import battleship.classes.DifficultyLevel;
 import battleship.classes.Ranking;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,14 +26,14 @@ public class RankingController {
     @FXML
     private Button backButton;
     @FXML
-    private Label titleLable;
+    private Label titleLabel;
     @FXML
-    private ChoiceBox<String> categoryChoiceBox;
+    private ChoiceBox<DifficultyLevel> categoryChoiceBox;
     @FXML
     private TableView rankingTableView;
 
-    private CSVDictReader buttonLabels;
-    private String rootPath;
+    private CSVDictReader dictionary;
+
 
     private ArrayList<CustomTableColumn> currentTableColumns;
 
@@ -40,20 +41,18 @@ public class RankingController {
 
 
     public RankingController() throws IOException {
-        rootPath = System.getProperty("user.dir");
+        this.dictionary = Main.getDictionary();
     }
 
     @FXML
     void initialize() throws IOException {
 
-        loadButtonLabels();
-        backButton.setText(buttonLabels.getLabelByName("back").get(Main.getInterfaceLanguage()));
+        backButton.setText(dictionary.getLabelByName("back").get(Main.getInterfaceLanguage()));
+        titleLabel.setText(dictionary.getLabelByName("rank").get(Main.getInterfaceLanguage()));
 
         ranking = new Ranking(rankingTableView.widthProperty());
 
-        categoryChoiceBox.getItems().add("EASY");
-        categoryChoiceBox.getItems().add("MEDIUM");
-        categoryChoiceBox.getItems().add("HARD");
+        addDifficultyLevelsToChoiceBox();
 
         categoryChoiceBox.setOnAction((event) -> {
             
@@ -68,29 +67,46 @@ public class RankingController {
 
         rankingTableView.getColumns().addAll(currentTableColumns);
 
-        categoryChoiceBox.setValue("EASY");
-
         rankingTableView.getItems().addAll(getUsers());
 
     }
 
-    private void switchCategory() {
+    private void addDifficultyLevelsToChoiceBox() {
+        categoryChoiceBox.getItems().addAll(generateDifficultyLevels());
+        categoryChoiceBox.setValue(categoryChoiceBox.getItems().get(0));
+    } 
 
-        switch(categoryChoiceBox.getValue()) {
-            case "EASY":
+    private ArrayList<DifficultyLevel> generateDifficultyLevels() {
+        DifficultyLevel easyLevel = new DifficultyLevel("easy");
+        DifficultyLevel mediumLevel = new DifficultyLevel("medium");
+        DifficultyLevel hardLevel = new DifficultyLevel("hard");
+
+        ArrayList<DifficultyLevel> difficultyLevels = new ArrayList<>();
+        difficultyLevels.add(easyLevel);
+        difficultyLevels.add(mediumLevel);
+        difficultyLevels.add(hardLevel);
+
+        return difficultyLevels;
+    }
+
+    private void switchCategory() {
+        String category = categoryChoiceBox.getValue().getName();
+
+        switch(category) {
+            case "easy":
             setEasyTableColumns();
             break;
 
-            case "MEDIUM":
+            case "medium":
             setMediumTableColumns();
             break;
 
-            case "HARD":
+            case "hard":
             setHardTableColumns();
             break;
 
             default:
-            System.out.println("Not known category");
+            System.out.println("Not known category: " + category);
             break;
         }
     }
@@ -114,16 +130,6 @@ public class RankingController {
 
         currentTableColumns = ranking.getHardLvlTableColumns();
         rankingTableView.getColumns().addAll(currentTableColumns);
-    }
-
-    private void loadButtonLabels() throws IOException {
-
-        String csvFilePath = rootPath + "/src/battleship/lang/button-labels.csv";
-        try {
-            buttonLabels = new CSVDictReader(csvFilePath);
-        } catch (Exception IOException) {
-            System.out.println("Cannot load file: " + csvFilePath);
-        }
     }
 
     public void backButtonPressed(ActionEvent actionEvent) throws IOException {
