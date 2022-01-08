@@ -7,6 +7,7 @@ import battleship.Main;
 import battleship.classes.CustomButton;
 import battleship.classes.Menu;
 import battleship.classes.MenuVBox;
+import battleship.classes.Player;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -91,10 +92,15 @@ public class MainMenuController {
         switch (buttonName) {
 
             case "pvc":
+                startGame(false, true, btn);
+                break;
+
             case "pvp":
+                startGame(false, false, btn);
+                break;
+
             case "cvc":
-                Main.setGameMode(buttonName);
-                showPlayersSelection(btn);
+                startGame(true, true, btn);
                 break;
 
             case "rank":
@@ -234,6 +240,20 @@ public class MainMenuController {
     private void switchLanguage() {
         menu.changeInterfaceLanguage(Main.getInterfaceLanguage());
         menu.refresh();
+    }
+
+    private void startGame(boolean isPlayerOneAI, boolean isPlayerTwoAI, CustomButton btn) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/battleship/view/gameView.fxml"));
+        Parent newRoot = fxmlLoader.load();
+
+        GameController controller = fxmlLoader.getController();
+        controller.setPlayers(new Player(isPlayerOneAI), new Player(isPlayerTwoAI));
+        controller.startGame();
+
+        Scene scene = new Scene(newRoot);
+        Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
+        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/game.css").toExternalForm());
+        stageTheButtonBelongs.setScene(scene);
     }
 
 }
