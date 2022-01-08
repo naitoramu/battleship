@@ -3,9 +3,12 @@ package battleship.controller;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import battleship.Main;
 import battleship.classes.CSVDictReader;
+import battleship.classes.DifficultyLevel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -43,22 +46,23 @@ public class PlayersSelectionController {
     private Label playerOneUsernameLabel;
     private Label playerTwoUsernameLabel;
 
-    private String rootPath;
-    private CSVDictReader buttonLabels;
+    private static final String ROOT_PATH = Main.getRootPath();
+    private CSVDictReader dictionary;
 
     public PlayersSelectionController() {
-        rootPath = System.getProperty("user.dir");
+        dictionary = Main.getDictionary();
         playerOneUsernameLabel = new Label();
         playerTwoUsernameLabel = new Label();
+
     }
 
     @FXML
     void initialize() throws IOException {
-        loadButtonLabels();
-        backButton.setText(buttonLabels.getLabelByName("back").get(Main.getInterfaceLanguage()));
-        startButton.setText(buttonLabels.getLabelByName("start-game").get(Main.getInterfaceLanguage()));
+
+        backButton.setText(dictionary.getLabelByName("back").get(Main.getInterfaceLanguage()));
+        startButton.setText(dictionary.getLabelByName("start-game").get(Main.getInterfaceLanguage()));
         startButton.setDisable(true);
-        titleLabel.setText(buttonLabels.getLabelByName(Main.getGameMode()).get(Main.getInterfaceLanguage()));
+        titleLabel.setText(dictionary.getLabelByName(Main.getGameMode()).get(Main.getInterfaceLanguage()));
 
         checkIfPlayersAreHumans();
 
@@ -102,7 +106,7 @@ public class PlayersSelectionController {
 
         Main.setPlayerOne(Main.getLogedUser());
 
-        playerOneImageView.setImage(loadAvatar(rootPath + "/src/battleship/avatar/human-avatar.png"));
+        playerOneImageView.setImage(loadAvatar(ROOT_PATH + "/src/battleship/avatar/human-avatar.png"));
         playerOneUsernameLabel.setText(Main.getPlayerOne().getUsername());
         playerOneVBox.getChildren().add(playerOneUsernameLabel);
 
@@ -112,60 +116,17 @@ public class PlayersSelectionController {
 
     private void initializePlayerTwoAsHuman() throws FileNotFoundException {
 
-        playerTwoImageView.setImage(loadAvatar(rootPath + "/src/battleship/avatar/human-avatar.png"));
+        playerTwoImageView.setImage(loadAvatar(ROOT_PATH + "/src/battleship/avatar/human-avatar.png"));
 
-        if (Main.getPlayerTwo() != null){
+        if (Main.getPlayerTwo() != null) {
+
             playerTwoUsernameLabel.setText(Main.getPlayerTwo().getUsername());
             playerTwoVBox.getChildren().add(playerTwoUsernameLabel);
-            Button changePlayerTwoButton = new Button();
-            changePlayerTwoButton.setText(buttonLabels.getLabelByName("change-player").get(Main.getInterfaceLanguage()));
-            changePlayerTwoButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
-                public void handle(MouseEvent event) {
-                    Main.setPlayerTwo(null);
-                    try {
-                        playerTwoVBox.getChildren().remove(playerTwoUsernameLabel);
-                        playerTwoVBox.getChildren().remove(changePlayerTwoButton);
-                        initializePlayerTwoAsHuman();
-                    } catch (FileNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }));
+            playerTwoVBox.getChildren().add(generateChangePlayerTwoButton());
 
-            playerTwoVBox.getChildren().add(changePlayerTwoButton);
         } else {
 
-            Button logInButton = new Button();
-            Button registerButton = new Button();
-
-            logInButton.setText(buttonLabels.getLabelByName("log-in").get(Main.getInterfaceLanguage()));
-            registerButton.setText(buttonLabels.getLabelByName("register").get(Main.getInterfaceLanguage()));
-
-            logInButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
-                public void handle(MouseEvent event) {
-                    try {
-                        showLogInMenu((Button) event.getSource());
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }));
-
-            registerButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
-                public void handle(MouseEvent event) {
-                    try {
-                        showRegisterMenu((Button) event.getSource());
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }));
-
-            playerTwoVBox.getChildren().add(logInButton);
-            playerTwoVBox.getChildren().add(registerButton);
+            playerTwoVBox.getChildren().addAll(generateLogInAndRegisterButtons());
 
         }
 
@@ -174,55 +135,146 @@ public class PlayersSelectionController {
     }
 
     private void initializePlayerOneAsComputer() throws FileNotFoundException {
-        playerOneImageView.setImage(loadAvatar(rootPath + "/src/battleship/avatar/computer-avatar.png"));
-        playerOneUsernameLabel.setText("Computer");
+
+        playerOneImageView.setImage(loadAvatar(ROOT_PATH + "/src/battleship/avatar/computer-avatar.png"));
+        playerOneUsernameLabel.setText(dictionary.getLabelByName("computer").get(Main.getInterfaceLanguage()));
+
         playerOneVBox.getChildren().add(playerOneUsernameLabel);
+        playerOneVBox.getChildren().add(generateChooseDiffLvlHBox(true));
 
-        ChoiceBox difficultyLevelChoiceBox = new ChoiceBox();
-        difficultyLevelChoiceBox.getItems().add("EASY");
-        difficultyLevelChoiceBox.getItems().add("MEDIUM");
-        difficultyLevelChoiceBox.getItems().add("HARD");
-        difficultyLevelChoiceBox.setValue("EASY");
-
-        Label chooseDifficultyLevelLabel = new Label();
-        chooseDifficultyLevelLabel.setText("Select difficulty level:");
-
-        HBox hbox = new HBox();
-        hbox.setAlignment(Pos.BASELINE_CENTER);
-        hbox.getChildren().add(chooseDifficultyLevelLabel);
-        hbox.getChildren().add(difficultyLevelChoiceBox);
-
-        playerOneVBox.getChildren().add(hbox);
     }
 
     private void initializePlayerTwoAsComputer() throws FileNotFoundException {
-        playerTwoImageView.setImage(loadAvatar(rootPath + "/src/battleship/avatar/computer-avatar.png"));
-        playerTwoUsernameLabel.setText("Computer");
+
+        playerTwoImageView.setImage(loadAvatar(ROOT_PATH + "/src/battleship/avatar/computer-avatar.png"));
+        playerTwoUsernameLabel.setText(dictionary.getLabelByName("computer").get(Main.getInterfaceLanguage()));
+
         playerTwoVBox.getChildren().add(playerTwoUsernameLabel);
+        playerTwoVBox.getChildren().add(generateChooseDiffLvlHBox(false));
 
-        ChoiceBox difficultyLevelChoiceBox = new ChoiceBox();
-        difficultyLevelChoiceBox.getItems().add("EASY");
-        difficultyLevelChoiceBox.getItems().add("MEDIUM");
-        difficultyLevelChoiceBox.getItems().add("HARD");
-        difficultyLevelChoiceBox.setValue("EASY");
+    }
 
+    private Button generateChangePlayerTwoButton() {
+        Button changePlayerTwoButton = new Button();
+        changePlayerTwoButton.setText(dictionary.getLabelByName("change-player").get(Main.getInterfaceLanguage()));
+        changePlayerTwoButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                Main.setPlayerTwo(null);
+                try {
+                    playerTwoVBox.getChildren().remove(playerTwoUsernameLabel);
+                    playerTwoVBox.getChildren().remove(changePlayerTwoButton);
+                    initializePlayerTwoAsHuman();
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }));
+
+        return changePlayerTwoButton;
+    }
+
+    private ArrayList<Button> generateLogInAndRegisterButtons() {
+
+        Button logInButton = new Button();
+        Button registerButton = new Button();
+
+        logInButton.setText(dictionary.getLabelByName("log-in").get(Main.getInterfaceLanguage()));
+        registerButton.setText(dictionary.getLabelByName("register").get(Main.getInterfaceLanguage()));
+
+        logInButton.setOnMouseClicked(event -> {
+            try {
+                showLogInMenu((Button) event.getSource());
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+
+        registerButton.setOnMouseClicked(event -> {
+            try {
+                showRegisterMenu((Button) event.getSource());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return new ArrayList<Button>(Arrays.asList(logInButton, registerButton));
+    }
+
+    private HBox generateChooseDiffLvlHBox(boolean isThisForPlayerOne) {
+        ChoiceBox<DifficultyLevel> difficultyLevelChoiceBox = new ChoiceBox();
         Label chooseDifficultyLevelLabel = new Label();
-        chooseDifficultyLevelLabel.setText("Select difficulty level:");
-
         HBox hbox = new HBox();
+
+        difficultyLevelChoiceBox.getItems().addAll(generateDifficultyLevels());
+
+        chooseDifficultyLevelLabel
+                .setText(dictionary.getLabelByName("select-diff-lvl").get(Main.getInterfaceLanguage()));
+
         hbox.setAlignment(Pos.BASELINE_CENTER);
         hbox.getChildren().add(chooseDifficultyLevelLabel);
         hbox.getChildren().add(difficultyLevelChoiceBox);
 
-        playerTwoVBox.getChildren().add(hbox);
+        if (isThisForPlayerOne) {
+            difficultyLevelChoiceBox.setOnAction(actionEvent -> setComputerDifficultyLevel(actionEvent, 1));
+        } else {
+            difficultyLevelChoiceBox.setOnAction(actionEvent -> setComputerDifficultyLevel(actionEvent, 2));
+        }
+
+        return hbox;
+    }
+
+    private ArrayList<DifficultyLevel> generateDifficultyLevels() {
+        DifficultyLevel easyLevel = new DifficultyLevel("easy");
+        DifficultyLevel mediumLevel = new DifficultyLevel("medium");
+        DifficultyLevel hardLevel = new DifficultyLevel("hard");
+
+        ArrayList<DifficultyLevel> difficultyLevels = new ArrayList<>();
+        difficultyLevels.add(easyLevel);
+        difficultyLevels.add(mediumLevel);
+        difficultyLevels.add(hardLevel);
+
+        return difficultyLevels;
+    }
+
+    private void setComputerDifficultyLevel(ActionEvent actionEvent, int playerNumber) {
+
+        DifficultyLevel difficultyLevel = (DifficultyLevel) ((ChoiceBox<DifficultyLevel>) actionEvent.getSource())
+                .getValue();
+
+        if (playerNumber == 1) {
+            Main.setPlayerOneDifficultyLevel(difficultyLevel);
+        } else if (playerNumber == 2) {
+            Main.setPlayerTwoDifficultyLevel(difficultyLevel);
+        } else {
+            System.err.println("Not appropriate player number");
+        }
+        refresh();
     }
 
     private void refresh() {
-        if( Main.getPlayerOne() != null && Main.getPlayerTwo() != null ) {
-            startButton.setDisable(false);
+        if (Main.isPlayerOneIsHuman() && Main.isPlayerTwoIsHuman()) {
+            if (Main.getPlayerOne() != null && Main.getPlayerTwo() != null) {
+                startButton.setDisable(false);
+            } else {
+                startButton.setDisable(true);
+            }
+        } else if (!Main.isPlayerOneIsHuman() && !Main.isPlayerTwoIsHuman()) {
+            if (Main.getPlayerOneDifficultyLevel() != null && Main.getPlayerTwoDifficultyLevel() != null) {
+                startButton.setDisable(false);
+            } else {
+                startButton.setDisable(true);
+            }
         } else {
-            startButton.setDisable(true);
+            if (Main.getPlayerOne() != null && Main.getPlayerTwoDifficultyLevel() != null) {
+                startButton.setDisable(false);
+            } else {
+                startButton.setDisable(true);
+            }
         }
+
+        System.out.println("P1 " + Main.getPlayerOneDifficultyLevel());
+        System.out.println("P2 " + Main.getPlayerTwoDifficultyLevel());
     }
 
     private void showLogInMenu(Button btn) throws IOException {
@@ -237,16 +289,6 @@ public class PlayersSelectionController {
         backToMainMenu(btn);
     }
 
-    private void loadButtonLabels() throws IOException {
-
-        String csvFilePath = rootPath + "/src/battleship/lang/button-labels.csv";
-        try {
-            buttonLabels = new CSVDictReader(csvFilePath);
-        } catch (Exception IOException) {
-            System.out.println("Cannot load file: " + csvFilePath);
-        }
-    }
-
     private Image loadAvatar(String pathToImg) throws FileNotFoundException {
         FileInputStream input = new FileInputStream(pathToImg);
         return new Image(input);
@@ -257,7 +299,13 @@ public class PlayersSelectionController {
     }
 
     public void backButtonPressed(ActionEvent actionEvent) throws IOException {
+        resetPlayersDifficultyLevels();
         backToMainMenu((Button) actionEvent.getSource());
+    }
+
+    private void resetPlayersDifficultyLevels() {
+        Main.setPlayerOneDifficultyLevel(null);
+        Main.setPlayerTwoDifficultyLevel(null);
     }
 
     private void startGame(Button btn) throws IOException {

@@ -31,40 +31,29 @@ public class MyAccountController {
     @FXML
     private ImageView avatarImageView;
 
-    private String rootPath;
-    private CSVDictReader buttonLabels;
+    private CSVDictReader dictionary;
     private Image avatar;
     private User user;
+    private static final String ROOT_PATH = Main.getRootPath();
 
     public MyAccountController() throws IOException {
-        rootPath = System.getProperty("user.dir");
+        dictionary = Main.getDictionary();
         user = Main.getLogedUser();
-        loadButtonLabels();
         loadAvatar();
     }
-    
+
     @FXML
     void initialize() {
-        backButton.setText(buttonLabels.getLabelByName("back").get(Main.getInterfaceLanguage()));
-        changePasswdButton.setText(buttonLabels.getLabelByName("change-passwd").get(Main.getInterfaceLanguage()));
-        myAccountLabel.setText(buttonLabels.getLabelByName("my-account").get(Main.getInterfaceLanguage()));
+        backButton.setText(dictionary.getLabelByName("back").get(Main.getInterfaceLanguage()));
+        changePasswdButton.setText(dictionary.getLabelByName("change-passwd").get(Main.getInterfaceLanguage()));
+        myAccountLabel.setText(dictionary.getLabelByName("my-account").get(Main.getInterfaceLanguage()));
         avatarImageView.setImage(avatar);
         usernameLabel.setText(user.getUsername());
     }
 
     private void loadAvatar() throws FileNotFoundException {
-        FileInputStream input = new FileInputStream(rootPath + "/src/battleship/avatar/human-avatar.png");
+        FileInputStream input = new FileInputStream(ROOT_PATH + "/src/battleship/avatar/human-avatar.png");
         avatar = new Image(input);
-    }
-
-    private void loadButtonLabels() throws IOException {
-
-        String csvFilePath = rootPath + "/src/battleship/lang/button-labels.csv";
-        try {
-            buttonLabels = new CSVDictReader(csvFilePath);
-        } catch (Exception IOException) {
-            System.out.println("Cannot load file: " + csvFilePath);
-        }
     }
 
     public void changePasswdButtonPressed(ActionEvent actionEvent) throws IOException {

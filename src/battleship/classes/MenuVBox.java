@@ -26,11 +26,10 @@ public class MenuVBox extends VBox {
     private ArrayList<CustomTextField> textFields;
     private ArrayList<CustomPasswordField> passwordFields;
     private CustomButton newButton;
-    protected CSVDictReader buttonLabels;
-    protected CSVDictReader promptLabels;
+    protected CSVDictReader dictionary;
     protected Region spaceBeforeLastButton;
 
-    public MenuVBox(CSVDictReader buttonLabels, CSVDictReader promptLabels) {
+    public MenuVBox() {
         db = Main.getDB();
 
         this.buttonWidth = 330;
@@ -38,8 +37,7 @@ public class MenuVBox extends VBox {
         this.textFieldWidth = 400;
         this.textFieldHeight = 30;
 
-        this.buttonLabels = buttonLabels;
-        this.promptLabels = promptLabels;
+        this.dictionary = Main.getDictionary();
         this.interfaceLanguage = Main.getInterfaceLanguage();
 
         this.buttons = new ArrayList<CustomButton>();
@@ -50,7 +48,7 @@ public class MenuVBox extends VBox {
 
     public void addButton(String buttonName, EventHandler<MouseEvent> eventHandler) {
         newButton = new CustomButton(buttonName);
-        newButton.setText(buttonLabels.getLabelByName(buttonName).get(interfaceLanguage));
+        newButton.setText(dictionary.getLabelByName(buttonName).get(interfaceLanguage));
         newButton.setPrefSize(buttonWidth, buttonHeight);
         newButton.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
         buttons.add(newButton);
@@ -59,7 +57,7 @@ public class MenuVBox extends VBox {
 
     public void addButton(String buttonName, EventHandler<MouseEvent> eventHandler, int buttonPosition) {
         newButton = new CustomButton(buttonName);
-        newButton.setText(buttonLabels.getLabelByName(buttonName).get(interfaceLanguage));
+        newButton.setText(dictionary.getLabelByName(buttonName).get(interfaceLanguage));
         newButton.setPrefSize(buttonWidth, buttonHeight);
         newButton.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
         buttons.add(newButton);
@@ -70,14 +68,14 @@ public class MenuVBox extends VBox {
         for(CustomButton button : buttons) {
             if(button.getButtonName() == actualButtonName){
                 button.setButtonName(newButtonName);
-                button.setText(buttonLabels.getLabelByName(newButtonName).get(interfaceLanguage));
+                button.setText(dictionary.getLabelByName(newButtonName).get(interfaceLanguage));
             }
         }
     }
 
     public void addSelectLangButtons(EventHandler<MouseEvent> eventHandler) {
         
-        for(String language : buttonLabels.getAvailableLanguages()) {
+        for(String language : dictionary.getAvailableLanguages()) {
             newButton = new CustomButton("language");
             newButton.setText(language);
             newButton.addEventHandler(MouseEvent.MOUSE_CLICKED, eventHandler);
@@ -92,7 +90,7 @@ public class MenuVBox extends VBox {
 
         CustomTextField newTextField = null;
         newTextField = new CustomTextField(textFieldName);
-        newTextField.setPromptText(promptLabels.getLabelByName(textFieldName).get(interfaceLanguage));
+        newTextField.setPromptText(dictionary.getLabelByName(textFieldName).get(interfaceLanguage));
         newTextField.setPrefSize(textFieldWidth, textFieldHeight);
         textFields.add(newTextField);
         this.getChildren().add(newTextField);
@@ -101,7 +99,7 @@ public class MenuVBox extends VBox {
     public void addPasswordField(String passwordFieldName) {
 
         CustomPasswordField newPasswordField = new CustomPasswordField(passwordFieldName);
-        newPasswordField.setPromptText(promptLabels.getLabelByName(passwordFieldName).get(interfaceLanguage));
+        newPasswordField.setPromptText(dictionary.getLabelByName(passwordFieldName).get(interfaceLanguage));
         newPasswordField.setPrefSize(textFieldWidth, textFieldHeight);
         passwordFields.add(newPasswordField);
         this.getChildren().add(newPasswordField);
@@ -115,7 +113,7 @@ public class MenuVBox extends VBox {
     public void setButtonLabels() {
 
         for(CustomButton btn : buttons) {
-            btn.setText(buttonLabels.getLabelByName(btn.getButtonName()).get(interfaceLanguage));
+            btn.setText(dictionary.getLabelByName(btn.getButtonName()).get(interfaceLanguage));
         }
     }
 

@@ -1,5 +1,6 @@
 package battleship;
 
+import java.io.IOException;
 import java.util.List;
 
 import javafx.application.Application;
@@ -7,16 +8,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import battleship.classes.CSVDictReader;
+import battleship.classes.DifficultyLevel;
 import battleship.model.User;
 import battleship.util.DBUtil;
 
 public class Main extends Application {
 
     private static DBUtil db = new DBUtil();
+    private static CSVDictReader dictionary;
     private static List<User> users;
     private static User logedUser = null;
-    private static User PlayerOne = null;
-    private static User PlayerTwo = null;
+    private static User playerOne = null;
+    private static User playerTwo = null;
+    private static DifficultyLevel playerOneDifficultyLevel;
+    private static DifficultyLevel playerTwoDifficultyLevel;
 
     private static boolean userLogedIn = false;
     private static boolean playerOneIsHuman;
@@ -25,10 +31,12 @@ public class Main extends Application {
     private static String gameMode = null;
     private static String menuStartPage = "main-menu";
     private static String interfaceLanguage = "EN";
+    private static final String ROOT_PATH = System.getProperty("user.dir");
 
     public static void main(String[] args) throws Exception {
 
         loadDataFromDatabase();
+        loadDictionary();
         // if(users.get(0).getPassword().equals(users.get(1).getPassword())){
         // System.out.println("działa zajebiście");
         // } else {
@@ -58,6 +66,16 @@ public class Main extends Application {
         primaryStage.show();
         primaryStage.getScene().getStylesheets()
                 .add(getClass().getResource("view/stylesheet/mainMenu.css").toExternalForm());
+    }
+
+    private static void loadDictionary() throws IOException {
+
+        String csvFilePath = ROOT_PATH + "/src/battleship/lang/dictionary.csv";
+        try {
+            dictionary = new CSVDictReader(csvFilePath);
+        } catch (Exception IOException) {
+            System.out.println("Cannot load file: " + csvFilePath);
+        }
     }
 
     public static void loadDataFromDatabase() {
@@ -128,17 +146,31 @@ public class Main extends Application {
     }
 
     public static User getPlayerTwo() {
-        return PlayerTwo;
+        return playerTwo;
     }
     public static void setPlayerTwo(User playerTwo) {
-        PlayerTwo = playerTwo;
+        Main.playerTwo = playerTwo;
+    }
+
+    public static DifficultyLevel getPlayerTwoDifficultyLevel() {
+        return playerTwoDifficultyLevel;
+    }
+    public static void setPlayerTwoDifficultyLevel(DifficultyLevel difficultyLevel) {
+        playerTwoDifficultyLevel = difficultyLevel;
     }
 
     public static User getPlayerOne() {
-        return PlayerOne;
+        return playerOne;
     }
     public static void setPlayerOne(User playerOne) {
-        PlayerOne = playerOne;
+        Main.playerOne = playerOne;
+    }
+
+    public static DifficultyLevel getPlayerOneDifficultyLevel() {
+        return playerOneDifficultyLevel;
+    }
+    public static void setPlayerOneDifficultyLevel(DifficultyLevel difficultyLevel) {
+        playerOneDifficultyLevel = difficultyLevel;
     }
 
     public static boolean isAuthenticatePlayerTwo() {
@@ -146,5 +178,16 @@ public class Main extends Application {
     }
     public static void setAuthenticatePlayerTwo(boolean afterAuthRedirectToPvP) {
         Main.authenticatePlayerTwo = afterAuthRedirectToPvP;
+    }
+
+    public static CSVDictReader getDictionary() {
+        return dictionary;
+    }
+    public static void setDictionary(CSVDictReader dictionary) {
+        Main.dictionary = dictionary;
+    }
+
+    public static String getRootPath() {
+        return ROOT_PATH;
     }
 }

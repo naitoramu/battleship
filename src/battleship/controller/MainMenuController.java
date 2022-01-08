@@ -28,23 +28,22 @@ public class MainMenuController {
     private StackPane menuStackPane;
     private Menu menu;
 
-    private String rootPath;
     private EventHandler<MouseEvent> buttonEventHandler;
 
-    public MainMenuController(){
-        rootPath = System.getProperty("user.dir");
+    public MainMenuController() {
+        
     }
 
     @FXML
-    void initialize() throws IOException{
+    void initialize() throws IOException {
         titleLabel.setText("BATTLESHIP");
         errorLabel.setVisible(false);
-        
+
         initializeButtonEventHandler();
         initializeMenu();
     }
 
-    private void initializeButtonEventHandler(){
+    private void initializeButtonEventHandler() {
         buttonEventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -59,140 +58,140 @@ public class MainMenuController {
         };
     }
 
-    private void initializeMenu() throws IOException{
-        menu = new Menu(buttonEventHandler, rootPath);
+    private void initializeMenu() throws IOException {
+        menu = new Menu(buttonEventHandler);
         menu.refresh();
 
         switch (Main.getMenuStartPage()) {
             case "main-menu":
-            menuStackPane.getChildren().addAll(menu.getMainMenuVBox());
-            break;
+                menuStackPane.getChildren().addAll(menu.getMainMenuVBox());
+                break;
 
             case "change-passwd-menu":
-            menuStackPane.getChildren().addAll(menu.getChangePasswdMenuVBox());
-            Main.setMenuStartPage("main-menu");
-            break;
+                menuStackPane.getChildren().addAll(menu.getChangePasswdMenuVBox());
+                Main.setMenuStartPage("main-menu");
+                break;
 
             case "login-menu":
-            menuStackPane.getChildren().addAll(menu.getLogInMenuVBox());
-            Main.setMenuStartPage("main-menu");
-            break;
+                menuStackPane.getChildren().addAll(menu.getLogInMenuVBox());
+                Main.setMenuStartPage("main-menu");
+                break;
 
             case "register-menu":
-            menuStackPane.getChildren().addAll(menu.getRegisterMenuVBox());
-            Main.setMenuStartPage("main-menu");
-            break;
+                menuStackPane.getChildren().addAll(menu.getRegisterMenuVBox());
+                Main.setMenuStartPage("main-menu");
+                break;
         }
     }
 
-    private void handleButton(CustomButton btn) throws IOException, NoSuchAlgorithmException{
+    private void handleButton(CustomButton btn) throws IOException, NoSuchAlgorithmException {
 
         String buttonName = btn.getButtonName();
 
-        switch(buttonName){
+        switch (buttonName) {
 
             case "pvc":
             case "pvp":
             case "cvc":
-            Main.setGameMode(buttonName);
-            showPlayersSelection(btn);
-            break;
+                Main.setGameMode(buttonName);
+                showPlayersSelection(btn);
+                break;
 
             case "rank":
-            showRanking(btn);
-            break;
+                showRanking(btn);
+                break;
 
             case "change-lang":
-            switchMenuVBox(menu.getChangeLangMenuVBox());
-            System.out.println("Menu VBox has been changed");
-            break;
+                switchMenuVBox(menu.getChangeLangMenuVBox());
+                System.out.println("Menu VBox has been changed");
+                break;
 
             case "log-or-reg":
-            switchMenuVBox(menu.getLogOrSignMenuVBox());
-            break;
+                switchMenuVBox(menu.getLogOrSignMenuVBox());
+                break;
 
             case "exit":
-            Platform.exit();
-            break;
+                Platform.exit();
+                break;
 
             case "login":
-            switchMenuVBox(menu.getLogInMenuVBox());
-            break;
+                switchMenuVBox(menu.getLogInMenuVBox());
+                break;
 
             case "registration":
-            switchMenuVBox(menu.getRegisterMenuVBox());
-            break;
+                switchMenuVBox(menu.getRegisterMenuVBox());
+                break;
 
             case "register":
-            boolean registrationSucceeded = menu.getRegisterMenuVBox().registerNewUser();
-            if(registrationSucceeded){
-            
-                System.out.println("Registration succeeded");
-                Main.loadDataFromDatabase();
-                if(Main.isAuthenticatePlayerTwo()) {
-                    showPlayersSelection(btn);
-                } else {
-                    switchMenuVBox(menu.getMainMenuVBox());
-                    menu.refresh();
+                boolean registrationSucceeded = menu.getRegisterMenuVBox().registerNewUser();
+                if (registrationSucceeded) {
+
+                    System.out.println("Registration succeeded");
+                    Main.loadDataFromDatabase();
+                    if (Main.isAuthenticatePlayerTwo()) {
+                        showPlayersSelection(btn);
+                    } else {
+                        switchMenuVBox(menu.getMainMenuVBox());
+                        menu.refresh();
+                    }
+                    // menu.refresh();
                 }
-                // menu.refresh();
-            }
-            break;
+                break;
 
             case "log-in":
-            boolean logInSucceeded = menu.getLogInMenuVBox().logInUser();
-            if(logInSucceeded){
-                
-                System.out.println("Log in succeeded");
-                if(Main.isAuthenticatePlayerTwo()) {
-                    showPlayersSelection(btn);
-                } else {
-                    // Main.loadDataFromDatabase();
-                    switchMenuVBox(menu.getMainMenuVBox());
-                    menu.refresh();
+                boolean logInSucceeded = menu.getLogInMenuVBox().logInUser();
+                if (logInSucceeded) {
+
+                    System.out.println("Log in succeeded");
+                    if (Main.isAuthenticatePlayerTwo()) {
+                        showPlayersSelection(btn);
+                    } else {
+                        // Main.loadDataFromDatabase();
+                        switchMenuVBox(menu.getMainMenuVBox());
+                        menu.refresh();
+                    }
                 }
-            }
-            break;
+                break;
 
             case "log-out":
-            Main.setUserLogedIn(false);
-            Main.setLogedUser(null);
-            menu.refresh();
-            break;
+                Main.setUserLogedIn(false);
+                Main.setLogedUser(null);
+                menu.refresh();
+                break;
 
             case "language":
-            Main.setInterfaceLanguage(btn.getText());
-            switchLanguage();
-            switchMenuVBox(menu.getMainMenuVBox());
-            System.out.println("Application interface language has been changed");
-            break;
+                Main.setInterfaceLanguage(btn.getText());
+                switchLanguage();
+                switchMenuVBox(menu.getMainMenuVBox());
+                System.out.println("Application interface language has been changed");
+                break;
 
             case "my-account":
-            showMyAccount(btn);
-            break;
+                showMyAccount(btn);
+                break;
 
             case "submit-passwd-change":
-            boolean passwdChangeSucceeded = menu.getChangePasswdMenuVBox().changePassword();
-            if(passwdChangeSucceeded){
-                Main.loadDataFromDatabase();
-                switchMenuVBox(menu.getMainMenuVBox());
-                menu.refresh();
-                System.out.println("Password changed succesfully");
-            }
-            break;
+                boolean passwdChangeSucceeded = menu.getChangePasswdMenuVBox().changePassword();
+                if (passwdChangeSucceeded) {
+                    Main.loadDataFromDatabase();
+                    switchMenuVBox(menu.getMainMenuVBox());
+                    menu.refresh();
+                    System.out.println("Password changed succesfully");
+                }
+                break;
 
             case "back":
-            if (menuStackPane.getChildren().get(0).equals(menu.getLogInMenuVBox()) ||
+                if (menuStackPane.getChildren().get(0).equals(menu.getLogInMenuVBox()) ||
                         menuStackPane.getChildren().get(0).equals(menu.getRegisterMenuVBox())) {
-                switchMenuVBox(menu.getLogOrSignMenuVBox());
-            } else {
-                switchMenuVBox(menu.getMainMenuVBox());
-            }
-            break;
+                    switchMenuVBox(menu.getLogOrSignMenuVBox());
+                } else {
+                    switchMenuVBox(menu.getMainMenuVBox());
+                }
+                break;
 
             default:
-            System.out.println("You pressed button '" + buttonName + "'");
-            break;
+                System.out.println("You pressed button '" + buttonName + "'");
+                break;
         }
     }
 
@@ -201,7 +200,8 @@ public class MainMenuController {
         Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/playersSelection.fxml"));
         Scene scene = new Scene(newRoot);
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
-        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/playersSelection.css").toExternalForm());
+        scene.getStylesheets()
+                .add(getClass().getResource("/battleship/view/stylesheet/playersSelection.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
     }
 
@@ -220,17 +220,18 @@ public class MainMenuController {
         Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/myAccountView.fxml"));
         Scene scene = new Scene(newRoot);
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
-        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/myAccount.css").toExternalForm());
+        scene.getStylesheets()
+                .add(getClass().getResource("/battleship/view/stylesheet/myAccount.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
 
     }
 
-    private void switchMenuVBox(MenuVBox VBox){
+    private void switchMenuVBox(MenuVBox VBox) {
         menuStackPane.getChildren().clear();
         menuStackPane.getChildren().addAll(VBox);
     }
 
-    private void switchLanguage(){
+    private void switchLanguage() {
         menu.changeInterfaceLanguage(Main.getInterfaceLanguage());
         menu.refresh();
     }
