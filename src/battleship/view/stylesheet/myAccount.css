@@ -7,17 +7,21 @@
     -fx-font-family: "VT323";
 }
 
-#titleLabel {
+#myAccountLabel {
     -fx-text-fill: white;
-    -fx-font-size: 150px;
+    -fx-font-size: 105px;
 }
 
-#titleLabel .text {
-    -fx-stroke-width: 3px;
+#myAccountLabel .text {
+    -fx-stroke-width: 2px;
     -fx-stroke: black;
 }
 
-CustomButton {
+#usernameLabel {
+    -fx-font-size: 96px;
+}
+
+Button {
     -fx-background-color: linear-gradient(to bottom, #0d7ee0, #82c5ff);
     -fx-text-fill: linear-gradient(to bottom, #2e3e69, #1e2c3f);
     -fx-font-size: 32px;
@@ -27,19 +31,9 @@ CustomButton {
     -fx-background-insets: 1px;
 }
 
-CustomButton:hover {
+Button:hover {
     -fx-background-color: linear-gradient(to top, #0d7ee0, #82c5ff);
     -fx-text-fill: black;
     -fx-border-color: black;
 }
 
-MenuVBox {
-    -fx-alignment: center;
-    -fx-spacing: 10px;
-}
-
-CustomTextField, CustomPasswordField {
-    -fx-max-width: 400;
-    -fx-height: 50;
-    -fx-font-size: 32px;
-}

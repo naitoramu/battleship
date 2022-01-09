@@ -10,31 +10,28 @@ public class Menu {
 
     private String rootPath;
 
-    private CSVDictReader buttonLabels;
-    private CSVDictReader promptLabels;
     private EventHandler<MouseEvent> buttonEventHandler;
     private MenuVBox mainMenuVBox;
     private MenuVBox changeLangMenuVBox;
     private MenuVBox logInOrRegisterMenuVBox;
     private MenuVBox registerMenuVBox;
     private MenuVBox logInMenuVBox;
+    private MenuVBox changePasswdMenuVBox;
 
-    public Menu(EventHandler<MouseEvent> buttonEventHandler, String rootPath) throws IOException {
+    public Menu(EventHandler<MouseEvent> buttonEventHandler) throws IOException {
 
         this.buttonEventHandler = buttonEventHandler;
-        this.rootPath = rootPath;
 
-        loadButtonLabels();
-        loadTextFieldPromptLabels();
         initializeMainMenu();
         initializeChangeLangMenu();
         initializeLogInOrRegisterMenu();
         initializeRegisterMenu();
         initializeLogInMenu();
+        initializeChangePasswdMenu();
     }
 
     private void initializeMainMenu() {
-        mainMenuVBox = new MenuVBox(buttonLabels, promptLabels);
+        mainMenuVBox = new MenuVBox();
         mainMenuVBox.addButton("pvc", buttonEventHandler);
         mainMenuVBox.addButton("pvp", buttonEventHandler);
         mainMenuVBox.addButton("cvc", buttonEventHandler);
@@ -49,12 +46,12 @@ public class Menu {
     }
 
     private void initializeChangeLangMenu() {
-        changeLangMenuVBox = new MenuVBox(buttonLabels, promptLabels);
+        changeLangMenuVBox = new MenuVBox();
         changeLangMenuVBox.addSelectLangButtons(buttonEventHandler);
     }
 
     private void initializeLogInOrRegisterMenu() {
-        logInOrRegisterMenuVBox = new MenuVBox(buttonLabels, promptLabels);
+        logInOrRegisterMenuVBox = new MenuVBox();
         logInOrRegisterMenuVBox.addButton("login", buttonEventHandler);
         logInOrRegisterMenuVBox.addButton("registration", buttonEventHandler);
 
@@ -63,7 +60,7 @@ public class Menu {
     }
 
     private void initializeRegisterMenu() {
-        registerMenuVBox = new MenuVBox(buttonLabels, promptLabels);
+        registerMenuVBox = new MenuVBox();
         registerMenuVBox.addTextField("username");
         registerMenuVBox.addPasswordField("password");
         registerMenuVBox.addButton("register", buttonEventHandler);
@@ -73,7 +70,7 @@ public class Menu {
     }
 
     private void initializeLogInMenu() {
-        logInMenuVBox = new MenuVBox(buttonLabels, promptLabels);
+        logInMenuVBox = new MenuVBox();
         logInMenuVBox.addTextField("username");
         logInMenuVBox.addPasswordField("password");
         logInMenuVBox.addButton("log-in", buttonEventHandler);
@@ -82,24 +79,14 @@ public class Menu {
         logInMenuVBox.addButton("back", buttonEventHandler);
     }
 
-    private void loadButtonLabels() throws IOException {
+    private void initializeChangePasswdMenu() {
+        changePasswdMenuVBox = new MenuVBox();
+        changePasswdMenuVBox.addPasswordField("old-password");
+        changePasswdMenuVBox.addPasswordField("new-password");
+        changePasswdMenuVBox.addButton("submit-passwd-change", buttonEventHandler);
 
-        String csvFilePath = rootPath + "/src/battleship/lang/button-labels.csv";
-        try {
-            buttonLabels = new CSVDictReader(csvFilePath);
-        } catch (Exception IOException) {
-            System.out.println("Cannot load file: " + csvFilePath);
-        }
-    }
-
-    private void loadTextFieldPromptLabels() throws IOException {
-
-        String csvFilePath = rootPath + "/src/battleship/lang/textField-prompt-labels.csv";
-        try {
-            promptLabels = new CSVDictReader(csvFilePath);
-        } catch (Exception IOException) {
-            System.out.println("Cannot load file: " + csvFilePath);
-        }
+        changePasswdMenuVBox.addSpaceBeforeLastButton();
+        changePasswdMenuVBox.addButton("back", buttonEventHandler);
     }
 
     public void changeInterfaceLanguage(String language) {
@@ -113,10 +100,14 @@ public class Menu {
 
     public void refresh() {
         if(Main.isUserLogedIn()) {
-            addButton("stats", 4);
+            addButton("pvc", 0);
+            addButton("pvp", 1);
+            addButton("my-account", 5);
             swapLogOutButton();
         } else {
-            removeButton("stats");
+            removeButton("pvc");
+            removeButton("pvp");
+            removeButton("my-account");
             swapLogInButton();
         }
 
@@ -163,6 +154,10 @@ public class Menu {
 
     public MenuVBox getLogInMenuVBox() {
         return logInMenuVBox;
+    }
+
+    public MenuVBox getChangePasswdMenuVBox() {
+        return changePasswdMenuVBox;
     }
 
 }

@@ -17,48 +17,8 @@
     -fx-stroke: black;
 }
 
-#backButton {
+Label {
     -fx-font-size: 32px;
-}
-
-#categoryChoiceBox {
-    -fx-font-size: 32px;
-}
-
-.table-view {
-    -fx-background-color: transparent;
-    -fx-border-radius: 6px;
-    -fx-border-width: 3px;
-    -fx-background-insets: 0px;
-    -fx-border-color: linear-gradient(to bottom, #2e3e69, #1e2c3f);
-}
-
-.table-view .column-header-background{
-    -fx-font-size: 40px;
-    -fx-background-color: #0d7ee0;
-}
-
-.table-view .column-header {
-    -fx-background-color: transparent;
-}
-
-.table-view .table-cell{
-    -fx-background-color: #82c5ff;
-    -fx-font-size: 32px;
-    -fx-padding: 2 0 2 10px;
-}
-
-.table-row-cell {
-    -fx-border-width: 1 0 0 0px;
-    -fx-border-color: black;
-}
-.table-row-cell:hover {
-    -fx-text-background-color: #0d7ee0;
-}
-
-.table-column {
-    -fx-border-width: 0 0 0 1px;
-    -fx-border-color: black;
 }
 
 Button, ChoiceBox {
