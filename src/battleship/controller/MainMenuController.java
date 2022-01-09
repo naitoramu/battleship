@@ -209,6 +209,7 @@ public class MainMenuController {
         scene.getStylesheets()
                 .add(getClass().getResource("/battleship/view/stylesheet/playersSelection.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
+        controller.startGame();
     }
 
     private void showRanking(CustomButton btn) throws IOException {
@@ -243,11 +244,12 @@ public class MainMenuController {
     }
 
     private void startGame(boolean isPlayerOneAI, boolean isPlayerTwoAI, CustomButton btn) throws IOException {
+    
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/battleship/view/gameView.fxml"));
         Parent newRoot = fxmlLoader.load();
 
         GameController controller = fxmlLoader.getController();
-        controller.setPlayers(new Player(isPlayerOneAI), new Player(isPlayerTwoAI));
+        controller.setPlayers(new Player(isPlayerOneAI, controller), new Player(isPlayerTwoAI, controller));
         controller.startGame();
 
         Scene scene = new Scene(newRoot);
