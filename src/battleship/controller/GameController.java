@@ -42,7 +42,7 @@ public class GameController {
     Player playerOne;
     Player playerTwo;
 
-    AI ai = new AI();
+    AI ai = new AI(this);
 
     public void setPlayers(Player playerOne, Player playerTwo) {
         this.playerOne = playerOne;
@@ -82,12 +82,12 @@ public class GameController {
                 ai.placeShips(currentPlayer.getBoard(), shipsLengths);
                 isEveryShipPlaced = true;
             } else {
-                handleShot(ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas()));
+                ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas());
             }
         }
     }
 
-    private void handleShot(Area clickedArea) {
+    public void handleShot(Area clickedArea) {
         if (clickedArea.getOwner() != currentPlayer && !clickedArea.wasHit()) {
             clickedArea.setHit();
             if (clickedArea.getState() == Area.State.SHIP) {

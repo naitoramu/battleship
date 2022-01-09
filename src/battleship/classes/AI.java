@@ -1,5 +1,10 @@
 package battleship.classes;
 
+import battleship.controller.GameController;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.util.Duration;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -7,17 +12,34 @@ import java.util.concurrent.TimeUnit;
 
 public class AI {
     private final Random randomGenerator = new Random();
+    private final GameController game;
 
-    public Area shoot(Map<Coordinates, Area> opponentsBoard) {
+    public AI(GameController game) {
+        this.game = game;
+    }
+
+    public void shoot(Map<Coordinates, Area> opponentsBoard) {
         Coordinates shotCoordinates;
         do {
             shotCoordinates = new Coordinates(randomGenerator.nextInt(10), randomGenerator.nextInt(10));
         } while (opponentsBoard.get(shotCoordinates).wasHit());
-        return opponentsBoard.get(shotCoordinates);
+
+        final Area areaToShoot = opponentsBoard.get(shotCoordinates);
+
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(500);
+                Platform.runLater(() -> game.handleShot(areaToShoot));
+            } catch (InterruptedException exc) {
+                throw new Error("Unexpected thread interruption");
+            }
+        });
+        thread.start();
     }
 
     // TODO: Place ships only in available places, check if new ship fits the board(doesn't cross from one row to another, through side)
     public void placeShips(Board board, List<Short> shipsLengths) {
+        final Timeline timeline = new Timeline();
         for (Short shipLength : shipsLengths) {
             boolean placeHorizontal = randomGenerator.nextBoolean();
             ShipPlacement shipPlacement;
