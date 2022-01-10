@@ -17,7 +17,7 @@ public class AI {
         this.game = game;
     }
 
-    public void shoot(Map<Coordinates, Area> opponentsBoard) {
+    public boolean shoot(Map<Coordinates, Area> opponentsBoard) {
         Coordinates shotCoordinates;
         do {
             shotCoordinates = new Coordinates(randomGenerator.nextInt(10), randomGenerator.nextInt(10));
@@ -34,6 +34,7 @@ public class AI {
             }
         });
         thread.start();
+        return areaToShoot.getState() == Area.State.SHIP;
     }
 
     // TODO: Place ships only in available places, check if new ship fits the board(doesn't cross from one row to another, through side)

@@ -3,7 +3,6 @@ package battleship.controller;
 import battleship.Main;
 import battleship.classes.*;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -92,15 +91,19 @@ public class GameController {
         isEveryShipPlaced = everyShipPlaced;
     }
 
-    private void nextPlayerTurn() {
-        currentPlayer = currentPlayer == playerOne ? playerTwo : playerOne;
+    private void nextTurn(boolean switchPlayers) {
+        if (switchPlayers) {
+            currentPlayer = currentPlayer == playerOne ? playerTwo : playerOne;
+        }
         refreshGameStatus();
         if (currentPlayer.isAI() && !isGameFinished) {
             if (isSetup) {
                 ai.placeShips(currentPlayer.getBoard(), shipsLengths, (currentPlayer == playerOne ? playerTwo : playerOne).isAI());
                 isEveryShipPlaced = true;
             } else {
-                ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas());
+                if (ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas())) {
+
+                }
             }
         }
     }
@@ -122,9 +125,11 @@ public class GameController {
                     handleGameFinish();
                     return;
                 }
+                nextTurn(false);
+                return;
             }
 
-            nextPlayerTurn();
+            nextTurn(true);
         }
     }
 
@@ -226,9 +231,6 @@ public class GameController {
         refreshGameStatus();
     }
 
-    public void handleStartButton() {
-    }
-
     public String getHumanReadableCoordinates(int col, int row) {
         return (char) (col + 65) + Integer.toString(row + 1);
     }
@@ -291,7 +293,7 @@ public class GameController {
                 playerTwoReadyButton.setVisible(false);
                 playerTwoAutoPosition.setVisible(false);
             }
-            nextPlayerTurn();
+            nextTurn(true);
         }
     }
 
