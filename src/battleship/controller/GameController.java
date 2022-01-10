@@ -88,12 +88,16 @@ public class GameController {
         gameStatus.setText(gameInfo);
     }
 
+    public void setEveryShipPlaced(boolean everyShipPlaced) {
+        isEveryShipPlaced = everyShipPlaced;
+    }
+
     private void nextPlayerTurn() {
         currentPlayer = currentPlayer == playerOne ? playerTwo : playerOne;
         refreshGameStatus();
         if (currentPlayer.isAI() && !isGameFinished) {
             if (isSetup) {
-                ai.placeShips(currentPlayer.getBoard(), shipsLengths);
+                ai.placeShips(currentPlayer.getBoard(), shipsLengths, (currentPlayer == playerOne ? playerTwo : playerOne).isAI());
                 isEveryShipPlaced = true;
             } else {
                 ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas());
@@ -216,7 +220,7 @@ public class GameController {
         currentPlayer = playerOne;
         setupBattleFields();
         if (currentPlayer.isAI()) {
-            ai.placeShips(currentPlayer.getBoard(), shipsLengths);
+            ai.placeShips(currentPlayer.getBoard(), shipsLengths, true);
             isEveryShipPlaced = true;
         }
         refreshGameStatus();
@@ -305,10 +309,7 @@ public class GameController {
 
     public void autoPosition() {
         if (cursor == 0 && !isEveryShipPlaced) {
-            ai.placeShips(currentPlayer.getBoard(), shipsLengths);
-            isEveryShipPlaced = true;
-            (currentPlayer == playerOne ? playerOneAutoPosition : playerTwoAutoPosition).setVisible(false);
-            playerReady();
+            ai.placeShips(currentPlayer.getBoard(), shipsLengths, false);
         }
     }
 

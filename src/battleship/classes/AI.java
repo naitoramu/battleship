@@ -37,8 +37,7 @@ public class AI {
     }
 
     // TODO: Place ships only in available places, check if new ship fits the board(doesn't cross from one row to another, through side)
-    public void placeShips(Board board, List<Short> shipsLengths) {
-        final Timeline timeline = new Timeline();
+    public void placeShips(Board board, List<Short> shipsLengths, boolean delayExecution) {
         for (Short shipLength : shipsLengths) {
             boolean placeHorizontal = randomGenerator.nextBoolean();
             ShipPlacement shipPlacement;
@@ -49,14 +48,21 @@ public class AI {
             board.placeShip(shipPlacement);
         }
 
-        Thread thread = new Thread(() -> {
-            try {
-                Thread.sleep(1500);
-                Platform.runLater(() -> game.playerReady());
-            } catch (InterruptedException exc) {
-                throw new Error("Unexpected thread interruption");
-            }
-        });
-        thread.start();
+        game.setEveryShipPlaced(true);
+
+        if (delayExecution) {
+            Thread thread = new Thread(() -> {
+                try {
+                    Thread.sleep(1500);
+                    Platform.runLater(() -> game.playerReady());
+                } catch (InterruptedException exc) {
+                    throw new Error("Unexpected thread interruption");
+                }
+            });
+            thread.start();
+
+        } else {
+            game.playerReady();
+        }
     }
 }
