@@ -318,6 +318,21 @@ public class PlayersSelectionController {
 
     }
 
+    // private void startGame(Button btn) throws IOException {
+
+    //     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/battleship/view/gameView.fxml"));
+    //     Parent newRoot = fxmlLoader.load();
+
+    //     GameController controller = fxmlLoader.getController();
+    //     controller.setPlayers(new Player(isPlayerOneAI, controller), new Player(isPlayerTwoAI, controller));
+    //     controller.startGame();
+
+    //     Scene scene = new Scene(newRoot);
+    //     Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
+    //     scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/game.css").toExternalForm());
+    //     stageTheButtonBelongs.setScene(scene);
+    // }
+
     private void backToMainMenu(Button btn) throws IOException {
 
         Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/mainMenuView.fxml"));

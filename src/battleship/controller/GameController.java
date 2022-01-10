@@ -1,5 +1,6 @@
 package battleship.controller;
 
+import battleship.Main;
 import battleship.classes.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -65,6 +66,12 @@ public class GameController {
 
     int cursor = 0;
     boolean isEveryShipPlaced = false;
+
+    @FXML
+    void initialize() {
+        setPlayers(new Player(!Main.isPlayerOneIsHuman(), this), new Player(!Main.isPlayerTwoIsHuman(), this));
+        startGame();
+    }
 
     private void refreshGameStatus() {
         String gameInfo;

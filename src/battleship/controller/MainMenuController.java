@@ -92,15 +92,10 @@ public class MainMenuController {
         switch (buttonName) {
 
             case "pvc":
-                startGame(false, true, btn);
-                break;
-
             case "pvp":
-                startGame(false, false, btn);
-                break;
-
             case "cvc":
-                startGame(true, true, btn);
+                Main.setGameMode(buttonName);
+                showPlayersSelection(btn);
                 break;
 
             case "rank":
@@ -189,7 +184,11 @@ public class MainMenuController {
             case "back":
                 if (menuStackPane.getChildren().get(0).equals(menu.getLogInMenuVBox()) ||
                         menuStackPane.getChildren().get(0).equals(menu.getRegisterMenuVBox())) {
-                    switchMenuVBox(menu.getLogOrSignMenuVBox());
+                    if (Main.isAuthenticatePlayerTwo()) {
+                        showPlayersSelection(btn);
+                    } else {
+                        switchMenuVBox(menu.getLogOrSignMenuVBox());
+                    }
                 } else {
                     switchMenuVBox(menu.getMainMenuVBox());
                 }
@@ -240,21 +239,6 @@ public class MainMenuController {
     private void switchLanguage() {
         menu.changeInterfaceLanguage(Main.getInterfaceLanguage());
         menu.refresh();
-    }
-
-    private void startGame(boolean isPlayerOneAI, boolean isPlayerTwoAI, CustomButton btn) throws IOException {
-
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/battleship/view/gameView.fxml"));
-        Parent newRoot = fxmlLoader.load();
-
-        GameController controller = fxmlLoader.getController();
-        controller.setPlayers(new Player(isPlayerOneAI, controller), new Player(isPlayerTwoAI, controller));
-        controller.startGame();
-
-        Scene scene = new Scene(newRoot);
-        Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
-        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/game.css").toExternalForm());
-        stageTheButtonBelongs.setScene(scene);
     }
 
 }

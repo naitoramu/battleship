@@ -233,33 +233,6 @@ public class DBUtil {
         return statistics;
     }
 
-    // public List<Statistics> selectKsiazki() throws SQLException {
-    //     List<Statistics> statistics = new LinkedList<Statistics>();
-    //     ResultSet result = null;
-    //     try {
-    //         result = usersStatement.executeQuery("SELECT * FROM ksiazki");
-    //         int userID, numberOfWins, numberOfLosts;
-    //         while (result.next()) {
-    //             userID = result.getInt("user_id");
-    //             numberOfWins = result.getInt("number_of_wins");
-    //             numberOfLosts = result.getInt("number_of_losts");
-    //             statistics.add(new Statistics(numberOfWins, numberOfLosts));
-    //         }
-    //     } catch (SQLException e) {
-    //         e.printStackTrace();
-    //         return null;
-    //     } finally {
-    //         if(result != null){
-    //             try {
-    //                 result.close();    
-    //             } catch (SQLException e) {
-    //                 e.printStackTrace();
-    //             }
-    //         }
-    //     }
-    //     return statistics;
-    // }
-
     public void closeConnection() {
         try {
             userConnection.close();
