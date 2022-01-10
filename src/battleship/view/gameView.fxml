@@ -15,8 +15,8 @@
    <children>
       <AnchorPane fx:id="anchorPane">
          <children>
-            <Label layoutX="261.0" layoutY="47.0" text="Label_GRACZ_A" AnchorPane.leftAnchor="261.0" />
-            <Label layoutX="966.0" layoutY="56.0" text="Label_GRACZ_B" AnchorPane.rightAnchor="231.0" />
+            <Label layoutX="260.0" layoutY="47.0" text="Label_GRACZ_A" AnchorPane.leftAnchor="260.0" />
+            <Label layoutX="925.0" layoutY="47.0" text="Label_GRACZ_B" AnchorPane.rightAnchor="272.6" />
             <Label layoutX="596.0" layoutY="29.0" text="BITWA MORSKA" />
             <AnchorPane fx:id="playerOnePane" layoutX="113.0" layoutY="95.0">
                <children>
@@ -305,15 +305,12 @@
                </children>
             </AnchorPane>
             <Button layoutX="580.0" layoutY="653.0" mnemonicParsing="false" onAction="#justExit" prefHeight="26.0" prefWidth="120.0" text="Exit" />
-            <Button fx:id="playerOneReadyButton" layoutX="255.0" layoutY="518.0" mnemonicParsing="false" onAction="#playerReady" text="Player A Ready" />
+            <Button fx:id="playerOneReadyButton" layoutX="243.0" layoutY="517.0" mnemonicParsing="false" onAction="#playerReady" prefHeight="26.0" prefWidth="118.0" text="I'm ready" />
             <Button fx:id="go_to_menu" layoutX="580.0" layoutY="626.0" mnemonicParsing="false" onAction="#go_to_menu" prefHeight="26.0" prefWidth="120.0" text="Back" />
-            <Button fx:id="playerTwoReadyButton" layoutX="919.0" layoutY="518.0" mnemonicParsing="false" onAction="#playerReady" text="Player B Ready" />
+            <Button fx:id="playerTwoReadyButton" layoutX="907.0" layoutY="517.0" mnemonicParsing="false" onAction="#playerReady" prefHeight="26.0" prefWidth="118.0" text="I'm ready" />
             <Label fx:id="gameStatus" layoutX="506.0" layoutY="64.0" prefHeight="18.0" prefWidth="266.0" textAlignment="CENTER" />
-            <Button fx:id="startButton" layoutX="580.0" layoutY="579.0" mnemonicParsing="false" onAction="#handleStartButton" prefHeight="46.0" prefWidth="120.0" text="Start Game">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Button>
+            <Button fx:id="playerOneAutoPosition" layoutX="243.0" layoutY="492.0" mnemonicParsing="false" onAction="#autoPosition" text="Auto position ships" />
+            <Button fx:id="playerTwoAutoPosition" layoutX="907.0" layoutY="491.0" mnemonicParsing="false" onAction="#autoPosition" prefHeight="26.0" prefWidth="118.0" text="Auto position ships" />
          </children>
       </AnchorPane>
    </children>

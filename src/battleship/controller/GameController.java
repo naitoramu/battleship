@@ -37,6 +37,10 @@ public class GameController {
     @FXML
     Button playerTwoReadyButton;
     @FXML
+    Button playerOneAutoPosition;
+    @FXML
+    Button playerTwoAutoPosition;
+    @FXML
     Label gameStatus;
 
     Player playerOne;
@@ -142,6 +146,8 @@ public class GameController {
                 return;
             }
 
+            (currentPlayer == playerOne ? playerOneAutoPosition : playerTwoAutoPosition).setVisible(false);
+
             currentPlayer.getBoard().placeShip(shipPlacement);
 
             if (cursor < shipsLengths.size() - 1) {
@@ -181,6 +187,8 @@ public class GameController {
     public void startGame() {
         //printMatrixOfNames();
         playerTwoReadyButton.setVisible(false);
+        playerTwoAutoPosition.setVisible(false);
+
         currentPlayer = playerOne;
         setupBattleFields();
         if (currentPlayer.isAI()) {
@@ -242,14 +250,26 @@ public class GameController {
             if (currentPlayer == playerOne) {
                 isEveryShipPlaced = false;
                 cursor = 0;
+
                 playerTwoReadyButton.setVisible(true);
+                playerTwoAutoPosition.setVisible(true);
+
                 playerOneReadyButton.setVisible(false);
+                playerOneAutoPosition.setVisible(false);
             } else {
                 isSetup = false;
                 playerTwoReadyButton.setVisible(false);
-                System.out.println("START ROZGRYWKI");
             }
             nextPlayerTurn();
+        }
+    }
+
+    public void autoPosition() {
+        if (cursor == 0 && !isEveryShipPlaced) {
+            ai.placeShips(currentPlayer.getBoard(), shipsLengths);
+            isEveryShipPlaced = true;
+            (currentPlayer == playerOne ? playerOneAutoPosition : playerTwoAutoPosition).setVisible(false);
+            playerReady();
         }
     }
 
