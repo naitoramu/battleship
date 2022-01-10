@@ -15,7 +15,7 @@ public class Area extends Rectangle {
     private boolean isStateHidden;
     private boolean isHighlited;
     private boolean wasHit;
-    private final Player owner;
+    private Player owner;
     private final Coordinates coordinates;
 
     public Area(Coordinates coordinates, double x, double y, double width, double height, Player owner) {
@@ -23,6 +23,14 @@ public class Area extends Rectangle {
         this.state = State.WATER;
         this.isStateHidden = false;
         this.owner = owner;
+        this.coordinates = coordinates;
+        refreshAppearance();
+    }
+
+    public Area(Coordinates coordinates, double x, double y, double width, double height) {
+        super(x, y, width, height);
+        this.state = State.WATER;
+        this.isStateHidden = false;
         this.coordinates = coordinates;
         refreshAppearance();
     }

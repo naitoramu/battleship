@@ -308,7 +308,7 @@
             <Button fx:id="playerOneReadyButton" layoutX="243.0" layoutY="517.0" mnemonicParsing="false" onAction="#playerReady" prefHeight="26.0" prefWidth="118.0" text="I'm ready" />
             <Button fx:id="go_to_menu" layoutX="580.0" layoutY="626.0" mnemonicParsing="false" onAction="#go_to_menu" prefHeight="26.0" prefWidth="120.0" text="Back" />
             <Button fx:id="playerTwoReadyButton" layoutX="907.0" layoutY="517.0" mnemonicParsing="false" onAction="#playerReady" prefHeight="26.0" prefWidth="118.0" text="I'm ready" />
-            <Label fx:id="gameStatus" layoutX="506.0" layoutY="64.0" prefHeight="18.0" prefWidth="266.0" textAlignment="CENTER" />
+            <Label fx:id="gameStatus" alignment="CENTER" contentDisplay="CENTER" layoutX="506.0" layoutY="64.0" prefHeight="18.0" prefWidth="266.0" textAlignment="CENTER" />
             <Button fx:id="playerOneAutoPosition" layoutX="243.0" layoutY="492.0" mnemonicParsing="false" onAction="#autoPosition" text="Auto position ships" />
             <Button fx:id="playerTwoAutoPosition" layoutX="907.0" layoutY="491.0" mnemonicParsing="false" onAction="#autoPosition" prefHeight="26.0" prefWidth="118.0" text="Auto position ships" />
          </children>

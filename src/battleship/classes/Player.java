@@ -8,11 +8,13 @@ public class Player {
     private Integer points;
     private final Board board;
     private final boolean isAI;
+    private final int userId;
 
-    public Player(boolean isAI, GameController game) {
+    public Player(boolean isAI, GameController game, int userId) {
         this.points = 0;
         this.isAI = isAI;
         this.board = new Board(this, game);
+        this.userId = userId;
     }
 
     public boolean isAI() {
@@ -37,5 +39,9 @@ public class Player {
 
     public Board getBoard() {
         return board;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 }

@@ -9,8 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -19,7 +18,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 
 public class GameController {
@@ -60,6 +58,8 @@ public class GameController {
     boolean isGameFinished = false;
     boolean isShipDirectionHorizontal = true;
 
+    GameRecorder recorder;
+
 
     List<Short> shipsLengths = Arrays.asList(new Short[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
     int maxPoints = 20;
@@ -69,7 +69,10 @@ public class GameController {
 
     @FXML
     void initialize() {
-        setPlayers(new Player(!Main.isPlayerOneIsHuman(), this), new Player(!Main.isPlayerTwoIsHuman(), this));
+        setPlayers(
+                new Player(!Main.isPlayerOneIsHuman(), this, Main.isPlayerOneIsHuman() ? Main.getPlayerOne().getId() : 0),
+                new Player(!Main.isPlayerTwoIsHuman(), this, Main.isPlayerTwoIsHuman() ? Main.getPlayerTwo().getId() : 1)
+        );
         startGame();
     }
 
@@ -98,14 +101,22 @@ public class GameController {
         }
     }
 
+    public void handleGameFinish() {
+        System.out.println(currentPlayer == playerOne ? "Player One wins" : "Player Two wins");
+        isGameFinished = true;
+        refreshGameStatus();
+        showReplayAlert();
+    }
+
     public void handleShot(Area clickedArea) {
         if (clickedArea.getOwner() != currentPlayer && !clickedArea.wasHit()) {
+            recorder.recordShot(clickedArea);
             clickedArea.setHit();
             if (clickedArea.getState() == Area.State.SHIP) {
                 currentPlayer.addPoint();
                 if (currentPlayer.getScore() == maxPoints) {
-                    System.out.println(currentPlayer == playerOne ? "Player One wins" : "Player Two wins");
-                    isGameFinished = true;
+                    handleGameFinish();
+                    return;
                 }
             }
 
@@ -193,8 +204,14 @@ public class GameController {
 
     public void startGame() {
         //printMatrixOfNames();
+        recorder = new GameRecorder(playerOne, playerTwo);
         playerTwoReadyButton.setVisible(false);
         playerTwoAutoPosition.setVisible(false);
+
+        if (playerOne.isAI()) {
+            playerOneReadyButton.setVisible(false);
+            playerOneAutoPosition.setVisible(false);
+        }
 
         currentPlayer = playerOne;
         setupBattleFields();
@@ -254,20 +271,35 @@ public class GameController {
     public void playerReady() {
         if (isEveryShipPlaced) {
             currentPlayer.getBoard().handleSetupComplete();
+            recordCurrentPlayerBoard();
             if (currentPlayer == playerOne) {
                 isEveryShipPlaced = false;
                 cursor = 0;
-
-                playerTwoReadyButton.setVisible(true);
-                playerTwoAutoPosition.setVisible(true);
+                if (!playerTwo.isAI()) {
+                    playerTwoReadyButton.setVisible(true);
+                    playerTwoAutoPosition.setVisible(true);
+                }
 
                 playerOneReadyButton.setVisible(false);
                 playerOneAutoPosition.setVisible(false);
             } else {
                 isSetup = false;
                 playerTwoReadyButton.setVisible(false);
+                playerTwoAutoPosition.setVisible(false);
             }
             nextPlayerTurn();
+        }
+    }
+
+    public void recordCurrentPlayerBoard() {
+        ArrayList<Coordinates> occupiedAreas = new ArrayList<>();
+        for (Area area : currentPlayer.getBoard().getAreas().values()) {
+            if (area.getState() == Area.State.SHIP) occupiedAreas.add(area.getCoordinates());
+        }
+        if (currentPlayer == playerOne) {
+            recorder.setPlayerOneShipsCoordinates(occupiedAreas);
+        } else {
+            recorder.setPlayerTwoShipsCoordinates(occupiedAreas);
         }
     }
 
@@ -280,19 +312,58 @@ public class GameController {
         }
     }
 
-    public void go_to_menu(ActionEvent actionEvent) throws IOException {
-        backToMainMenu((Button) actionEvent.getSource());
+    public void go_to_menu() {
+        backToMainMenu();
     }
 
-    private void backToMainMenu(Button btn) throws IOException {
-        Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/mainMenuView.fxml"));
-        Scene scene = new Scene(newRoot);
-        Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
-        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/mainMenu.css").toExternalForm());
-        stageTheButtonBelongs.setScene(scene);
+    private void backToMainMenu() {
+        try {
+            Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/mainMenuView.fxml"));
+            Scene scene = new Scene(newRoot);
+            Stage stageTheButtonBelongs = (Stage) anchorPane.getScene().getWindow();
+            scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/mainMenu.css").toExternalForm());
+            stageTheButtonBelongs.setScene(scene);
+        } catch (IOException e) {
+            justExit();
+        }
     }
 
     public void justExit() {
         Platform.exit();
+    }
+
+    public void showReplayAlert() {
+        ButtonType okButton = new ButtonType("See replay", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButton = new ButtonType("Go back to menu", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Alert alert = new Alert(Alert.AlertType.NONE,
+                "Player " + (currentPlayer == playerOne ? "1 " : "2 ") + "wins. Do you want to see a replay?",
+                okButton,
+                cancelButton);
+
+        alert.setTitle("Game Finished");
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.get() == okButton) {
+            showReplay();
+        } else {
+            backToMainMenu();
+        }
+    }
+
+    public void showReplay() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/battleship/view/replayView.fxml"));
+        try {
+            Parent newRoot = fxmlLoader.load();
+            ReplayController controller = fxmlLoader.getController();
+            controller.prepareReplay(recorder);
+            Scene scene = new Scene(newRoot);
+            scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/game.css").toExternalForm());
+
+            Stage stage = (Stage) anchorPane.getScene().getWindow();
+            stage.setScene(scene);
+
+        } catch (IOException e) {
+            justExit();
+        }
     }
 }

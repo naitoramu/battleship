@@ -17,7 +17,7 @@ public class Board {
             new Coordinates(1, 1));
 
     private Map<Coordinates, Area> areas;
-    private final Player owner;
+    private Player owner;
 
     public Board(Player player, GameController game) {
         this.owner = player;
@@ -33,6 +33,23 @@ public class Board {
                 Area newArea = new Area(newAreaCoordinates, xOffset + areaSize * col, yOffset + areaSize * row, areaSize, areaSize, player);
                 newArea.addEventHandler(MouseEvent.MOUSE_CLICKED, game.areaClickHandler);
                 newArea.addEventHandler(MouseEvent.MOUSE_ENTERED, game.areaHoverHandler);
+
+                areas.put(newAreaCoordinates, newArea);
+            }
+        }
+    }
+
+    public Board() {
+        this.areas = new HashMap<>();
+
+        int xOffset = 52;
+        int yOffset = 70;
+        int areaSize = 30;
+
+        for (short row = 0; row < 10; row++) {
+            for (short col = 0; col < 10; col++) {
+                Coordinates newAreaCoordinates = new Coordinates(col, row);
+                Area newArea = new Area(newAreaCoordinates, xOffset + areaSize * col, yOffset + areaSize * row, areaSize, areaSize);
 
                 areas.put(newAreaCoordinates, newArea);
             }

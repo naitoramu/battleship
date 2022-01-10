@@ -8,7 +8,6 @@ import javafx.util.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 public class AI {
     private final Random randomGenerator = new Random();
@@ -28,7 +27,7 @@ public class AI {
 
         Thread thread = new Thread(() -> {
             try {
-                Thread.sleep(500);
+                Thread.sleep(10);
                 Platform.runLater(() -> game.handleShot(areaToShoot));
             } catch (InterruptedException exc) {
                 throw new Error("Unexpected thread interruption");
@@ -49,5 +48,15 @@ public class AI {
             } while (!shipPlacement.isPossible());
             board.placeShip(shipPlacement);
         }
+
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(1500);
+                Platform.runLater(() -> game.playerReady());
+            } catch (InterruptedException exc) {
+                throw new Error("Unexpected thread interruption");
+            }
+        });
+        thread.start();
     }
 }
