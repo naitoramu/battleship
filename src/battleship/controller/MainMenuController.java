@@ -154,11 +154,11 @@ public class MainMenuController {
                 }
                 break;
 
-            case "log-out":
-                Main.setUserLogedIn(false);
-                Main.setLogedUser(null);
-                menu.refresh();
-                break;
+            // case "log-out":
+            //     Main.setUserLogedIn(false);
+            //     Main.setLogedUser(null);
+            //     menu.refresh();
+            //     break;
 
             case "language":
                 Main.setInterfaceLanguage(btn.getText());

@@ -32,7 +32,15 @@
                      </children>
                   </VBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <VBox alignment="CENTER_LEFT" prefHeight="504.0" prefWidth="500.0" />
+                  <VBox alignment="CENTER_LEFT" prefHeight="504.0" prefWidth="500.0">
+                     <children>
+                        <StackPane prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                        <StackPane prefHeight="150.0" prefWidth="200.0">
+                           <children>
+                              <Button fx:id="logOutButton" mnemonicParsing="false" onAction="#logOutButtonPressed" text="Button" />
+                           </children>
+                        </StackPane>
+                     </children></VBox>
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>

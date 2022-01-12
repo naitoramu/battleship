@@ -25,6 +25,8 @@ public class MyAccountController {
     @FXML
     private Button changePasswdButton;
     @FXML
+    private Button logOutButton;
+    @FXML
     private Label myAccountLabel;
     @FXML
     private Label usernameLabel;
@@ -46,6 +48,7 @@ public class MyAccountController {
     void initialize() {
         backButton.setText(dictionary.getLabelByName("back").get(Main.getInterfaceLanguage()));
         changePasswdButton.setText(dictionary.getLabelByName("change-passwd").get(Main.getInterfaceLanguage()));
+        logOutButton.setText(dictionary.getLabelByName("log-out").get(Main.getInterfaceLanguage()));
         myAccountLabel.setText(dictionary.getLabelByName("my-account").get(Main.getInterfaceLanguage()));
         avatarImageView.setImage(avatar);
         usernameLabel.setText(user.getUsername());
@@ -61,8 +64,18 @@ public class MyAccountController {
         backToMainMenu((Button) actionEvent.getSource());
     }
 
+    public void logOutButtonPressed(ActionEvent actionEvent) throws IOException {
+        logOutUser();
+        backToMainMenu((Button) actionEvent.getSource());
+    }
+
     public void backButtonPressed(ActionEvent actionEvent) throws IOException {
         backToMainMenu((Button) actionEvent.getSource());
+    }
+
+    private void logOutUser() {
+        Main.setUserLogedIn(false);
+        Main.setLogedUser(null);
     }
 
     private void backToMainMenu(Button btn) throws IOException {

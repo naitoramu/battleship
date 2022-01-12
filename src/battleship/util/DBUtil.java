@@ -107,6 +107,8 @@ public class DBUtil {
             insertDifficultyLevel("MEDIUM");
             insertDifficultyLevel("HARD");
 
+            insertComputerAsUser("COMPUTER", "COMPUTER");
+
         } catch (SQLException e) {
             System.err.println("Error while creating tables");
             e.printStackTrace();
@@ -135,6 +137,23 @@ public class DBUtil {
         try {
             PreparedStatement prepStmt = userConnection.prepareStatement("""
                 INSERT INTO users
+                VALUES (NULL, ?, ?);
+            """);
+            prepStmt.setString(1, username);
+            prepStmt.setString(2, password);
+            prepStmt.execute();
+        } catch (SQLException e) {
+            System.err.println("Error while insert user");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean insertComputerAsUser(String username, String password) {
+        try {
+            PreparedStatement prepStmt = userConnection.prepareStatement("""
+                INSERT OR IGNORE INTO users
                 VALUES (NULL, ?, ?);
             """);
             prepStmt.setString(1, username);

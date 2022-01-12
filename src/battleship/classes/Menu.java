@@ -103,12 +103,12 @@ public class Menu {
             addButton("pvc", 0);
             addButton("pvp", 1);
             addButton("my-account", 5);
-            swapLogOutButton();
+            removeButton("log-or-reg");
         } else {
             removeButton("pvc");
             removeButton("pvp");
             removeButton("my-account");
-            swapLogInButton();
+            addButton("log-or-reg", 3);
         }
 
         mainMenuVBox.setButtonLabels();
@@ -129,12 +129,12 @@ public class Menu {
         }
     }
 
-    public void swapLogOutButton() {
-        mainMenuVBox.replaceButton("log-or-reg", "log-out");
-    }
-    public void swapLogInButton() {
-        mainMenuVBox.replaceButton("log-out", "log-or-reg");
-    }
+    // public void swapLogOutButton() {
+    //     mainMenuVBox.replaceButton("log-or-reg", "log-out");
+    // }
+    // public void swapLogInButton() {
+    //     mainMenuVBox.replaceButton("log-out", "log-or-reg");
+    // }
 
     public MenuVBox getMainMenuVBox() {
         return mainMenuVBox;
