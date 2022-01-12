@@ -38,6 +38,7 @@ public class Menu {
         mainMenuVBox.addButton("rank", buttonEventHandler);
         mainMenuVBox.addButton("change-lang", buttonEventHandler);
         mainMenuVBox.addButton("log-or-reg", buttonEventHandler);
+        mainMenuVBox.addButton("replay", buttonEventHandler);
 
         mainMenuVBox.addSpaceBeforeLastButton();
 
@@ -99,7 +100,7 @@ public class Menu {
     }
 
     public void refresh() {
-        if(Main.isUserLogedIn()) {
+        if (Main.isUserLogedIn()) {
             addButton("pvc", 0);
             addButton("pvp", 1);
             addButton("my-account", 5);
@@ -118,13 +119,13 @@ public class Menu {
     }
 
     private void addButton(String buttonName, int buttonPosition) {
-        if(!mainMenuVBox.isButtonAlreadyAdded(buttonName)) {
+        if (!mainMenuVBox.isButtonAlreadyAdded(buttonName)) {
             mainMenuVBox.addButton(buttonName, buttonEventHandler, buttonPosition);
         }
     }
 
     private void removeButton(String buttonName) {
-        if(mainMenuVBox.isButtonAlreadyAdded(buttonName)) {
+        if (mainMenuVBox.isButtonAlreadyAdded(buttonName)) {
             mainMenuVBox.removeButton(buttonName);
         }
     }

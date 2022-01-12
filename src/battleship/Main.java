@@ -106,6 +106,7 @@ public class Main extends Application {
     public static String getInterfaceLanguage() {
         return Main.interfaceLanguage;
     }
+
     public static void setInterfaceLanguage(String interfaceLanguage) {
         Main.interfaceLanguage = interfaceLanguage;
     }
@@ -113,6 +114,7 @@ public class Main extends Application {
     public static User getLogedUser() {
         return logedUser;
     }
+
     public static void setLogedUser(User logedUser) {
         Main.logedUser = logedUser;
     }
@@ -120,6 +122,7 @@ public class Main extends Application {
     public static String getMenuStartPage() {
         return menuStartPage;
     }
+
     public static void setMenuStartPage(String menuStartPage) {
         Main.menuStartPage = menuStartPage;
     }
@@ -127,6 +130,7 @@ public class Main extends Application {
     public static String getGameMode() {
         return gameMode;
     }
+
     public static void setGameMode(String gameMode) {
         Main.gameMode = gameMode;
     }
@@ -134,6 +138,7 @@ public class Main extends Application {
     public static boolean isPlayerTwoIsHuman() {
         return playerTwoIsHuman;
     }
+
     public static void setPlayerTwoIsHuman(boolean playerTwoIsHuman) {
         Main.playerTwoIsHuman = playerTwoIsHuman;
     }
@@ -141,6 +146,7 @@ public class Main extends Application {
     public static boolean isPlayerOneIsHuman() {
         return playerOneIsHuman;
     }
+
     public static void setPlayerOneIsHuman(boolean playerOneIsHuman) {
         Main.playerOneIsHuman = playerOneIsHuman;
     }
@@ -148,6 +154,7 @@ public class Main extends Application {
     public static User getPlayerTwo() {
         return playerTwo;
     }
+
     public static void setPlayerTwo(User playerTwo) {
         Main.playerTwo = playerTwo;
     }
@@ -155,6 +162,7 @@ public class Main extends Application {
     public static DifficultyLevel getPlayerTwoDifficultyLevel() {
         return playerTwoDifficultyLevel;
     }
+
     public static void setPlayerTwoDifficultyLevel(DifficultyLevel difficultyLevel) {
         playerTwoDifficultyLevel = difficultyLevel;
     }
@@ -162,6 +170,7 @@ public class Main extends Application {
     public static User getPlayerOne() {
         return playerOne;
     }
+
     public static void setPlayerOne(User playerOne) {
         Main.playerOne = playerOne;
     }
@@ -169,6 +178,7 @@ public class Main extends Application {
     public static DifficultyLevel getPlayerOneDifficultyLevel() {
         return playerOneDifficultyLevel;
     }
+
     public static void setPlayerOneDifficultyLevel(DifficultyLevel difficultyLevel) {
         playerOneDifficultyLevel = difficultyLevel;
     }
@@ -176,6 +186,7 @@ public class Main extends Application {
     public static boolean isAuthenticatePlayerTwo() {
         return authenticatePlayerTwo;
     }
+
     public static void setAuthenticatePlayerTwo(boolean afterAuthRedirectToPvP) {
         Main.authenticatePlayerTwo = afterAuthRedirectToPvP;
     }
@@ -183,6 +194,7 @@ public class Main extends Application {
     public static CSVDictReader getDictionary() {
         return dictionary;
     }
+
     public static void setDictionary(CSVDictReader dictionary) {
         Main.dictionary = dictionary;
     }

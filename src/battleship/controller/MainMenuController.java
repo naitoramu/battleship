@@ -194,6 +194,10 @@ public class MainMenuController {
                 }
                 break;
 
+            case "replay":
+                showReplays(btn);
+                break;
+
             default:
                 System.out.println("You pressed button '" + buttonName + "'");
                 break;
@@ -207,6 +211,14 @@ public class MainMenuController {
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
         scene.getStylesheets()
                 .add(getClass().getResource("/battleship/view/stylesheet/playersSelection.css").toExternalForm());
+        stageTheButtonBelongs.setScene(scene);
+    }
+
+    private void showReplays(CustomButton btn) throws IOException {
+
+        Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/replayListView.fxml"));
+        Scene scene = new Scene(newRoot);
+        Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
         stageTheButtonBelongs.setScene(scene);
     }
 

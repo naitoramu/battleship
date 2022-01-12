@@ -1,8 +1,12 @@
 package battleship.classes;
 
-public class ShotRecord {
+import java.io.Serializable;
+
+public class ShotRecord implements Serializable {
     final int targetPlayerId;
     final Coordinates areaCoordinates;
+
+    private static final long serialVersionUID = 1L;
 
     public ShotRecord(Player victim, Coordinates areaCoordinates) {
         this.targetPlayerId = victim.getUserId();

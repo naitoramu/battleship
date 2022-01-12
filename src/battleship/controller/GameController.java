@@ -101,9 +101,7 @@ public class GameController {
                 ai.placeShips(currentPlayer.getBoard(), shipsLengths, (currentPlayer == playerOne ? playerTwo : playerOne).isAI());
                 isEveryShipPlaced = true;
             } else {
-                if (ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas())) {
-
-                }
+                ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas());
             }
         }
     }
@@ -112,6 +110,7 @@ public class GameController {
         System.out.println(currentPlayer == playerOne ? "Player One wins" : "Player Two wins");
         isGameFinished = true;
         refreshGameStatus();
+        recorder.save();
         showReplayAlert();
     }
 
