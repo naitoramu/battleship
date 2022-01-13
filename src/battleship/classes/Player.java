@@ -9,6 +9,7 @@ public class Player {
     private final Board board;
     private final boolean isAI;
     private final int userId;
+    private int diffLvl;
 
     public Player(boolean isAI, GameController game, int userId) {
         this.points = 0;
@@ -43,5 +44,13 @@ public class Player {
 
     public int getUserId() {
         return userId;
+    }
+
+    public int getDiffLvl() {
+        return diffLvl;
+    }
+
+    public void setDiffLvl(int diffLvl) {
+        this.diffLvl = diffLvl;
     }
 }

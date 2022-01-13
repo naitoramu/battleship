@@ -72,6 +72,34 @@ public class GameController {
                 new Player(!Main.isPlayerOneIsHuman(), this, Main.isPlayerOneIsHuman() ? Main.getPlayerOne().getId() : 0),
                 new Player(!Main.isPlayerTwoIsHuman(), this, Main.isPlayerTwoIsHuman() ? Main.getPlayerTwo().getId() : 1)
         );
+        if(playerOne.isAI()){
+            switch (Main.getPlayerOneDifficultyLevel().getName()){
+                case "easy":
+                    playerOne.setDiffLvl(1);
+                    break;
+                case "medium":
+                    playerOne.setDiffLvl(2);
+                    break;
+                case "hard":
+                    playerOne.setDiffLvl(3);
+                    break;
+            }
+            //System.out.println(  Main.getPlayerOneDifficultyLevel().getName());
+        }
+        if(playerTwo.isAI()){
+            switch (Main.getPlayerTwoDifficultyLevel().getName()){
+                case "easy":
+                    playerTwo.setDiffLvl(1);
+                    break;
+                case "medium":
+                    playerTwo.setDiffLvl(2);
+                    break;
+                case "hard":
+                    playerTwo.setDiffLvl(3);
+                    break;
+            }
+            //System.out.println( Main.getPlayerTwoDifficultyLevel().getName());
+        }
         startGame();
     }
 
@@ -101,7 +129,7 @@ public class GameController {
                 ai.placeShips(currentPlayer.getBoard(), shipsLengths, (currentPlayer == playerOne ? playerTwo : playerOne).isAI());
                 isEveryShipPlaced = true;
             } else {
-                ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas());
+                ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas(),currentPlayer);
             }
         }
     }

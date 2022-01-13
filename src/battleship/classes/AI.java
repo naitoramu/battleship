@@ -17,20 +17,20 @@ public class AI {
         this.game = game;
     }
 
-    public boolean shoot(Map<Coordinates, Area> opponentsBoard) {
+    public boolean shoot(Map<Coordinates, Area> opponentsBoard, Player currPlayer) {
         Coordinates shotCoordinates;
-        int diffLvl = 3;//here it should depend on users pre-settings
+        int diffLvl = currPlayer.getDiffLvl();
         do {
             shotCoordinates = new Coordinates(randomGenerator.nextInt(10), randomGenerator.nextInt(10));
                 if(opponentsBoard.get(shotCoordinates).getState() == Area.State.SHIP){
                     switch(diffLvl) {
                             case 1:
-                                if(changeTarget(0.8)){//easy
+                                if(changeTarget(0.99)){//easy
                                     shotCoordinates = new Coordinates(randomGenerator.nextInt(10), randomGenerator.nextInt(10));
                                 }
                                 break;
                             case 2:
-                                if(changeTarget(0.35)){//medium
+                                if(changeTarget(0.5)){//medium
                                     shotCoordinates = new Coordinates(randomGenerator.nextInt(10), randomGenerator.nextInt(10));
                                 }
                                 break;
@@ -91,4 +91,3 @@ public class AI {
         return false;
     }
 }
-    
