@@ -19,8 +19,24 @@ public class AI {
 
     public boolean shoot(Map<Coordinates, Area> opponentsBoard) {
         Coordinates shotCoordinates;
+        int diffLvl = 3;//here it should depend on users pre-settings
         do {
             shotCoordinates = new Coordinates(randomGenerator.nextInt(10), randomGenerator.nextInt(10));
+                if(opponentsBoard.get(shotCoordinates).getState() == Area.State.SHIP){
+                    switch(diffLvl) {
+                            case 1:
+                                if(changeTarget(0.8)){//easy
+                                    shotCoordinates = new Coordinates(randomGenerator.nextInt(10), randomGenerator.nextInt(10));
+                                }
+                                break;
+                            case 2:
+                                if(changeTarget(0.35)){//medium
+                                    shotCoordinates = new Coordinates(randomGenerator.nextInt(10), randomGenerator.nextInt(10));
+                                }
+                                break;
+                                //for hard lvl it isn't changing so no need for statement
+                        }
+                }
         } while (opponentsBoard.get(shotCoordinates).wasHit());
 
         final Area areaToShoot = opponentsBoard.get(shotCoordinates);
@@ -66,4 +82,13 @@ public class AI {
             game.playerReady();
         }
     }
+
+    public boolean changeTarget(double threshold){//probability of changing target
+        Double rand = new Random().nextDouble();
+        if(rand <= threshold){
+            return true;
+        }
+        return false;
+    }
 }
+    
