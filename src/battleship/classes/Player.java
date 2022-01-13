@@ -11,11 +11,33 @@ public class Player {
     private final int userId;
     private int diffLvl;
 
+    private int shotsCount;
+    private int hitsCount;
+
     public Player(boolean isAI, GameController game, int userId) {
         this.points = 0;
         this.isAI = isAI;
         this.board = new Board(this, game);
         this.userId = userId;
+
+        this.shotsCount = 0;
+        this.hitsCount = 0;
+    }
+
+    public int getHitsCount() {
+        return hitsCount;
+    }
+
+    public void addHit() {
+        this.hitsCount++;
+    }
+
+    public int getShotsCount() {
+        return shotsCount;
+    }
+
+    public void addShot() {
+        this.shotsCount++;
     }
 
     public boolean isAI() {

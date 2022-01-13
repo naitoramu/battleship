@@ -77,14 +77,14 @@ public class DBUtil {
                 number_of_games INTEGER NOT NULL DEFAULT 0,
                 number_of_wins INTEGER NOT NULL DEFAULT 0,
                 number_of_losts INTEGER NOT NULL DEFAULT 0,
-                number_of_shoots INTEGER NOT NULL DEFAULT 0,
+                number_of_shots INTEGER NOT NULL DEFAULT 0,
                 number_of_hits INTEGER NOT NULL DEFAULT 0,
                 FOREIGN KEY(user_id) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE SET NULL,
                 FOREIGN KEY(difficulty_level) REFERENCES difficulty_levels(name) ON UPDATE CASCADE ON DELETE SET NULL,
                 UNIQUE(user_id, difficulty_level)
             )""";
 
-        String createTrigger = """
+        String createInsertUserTrigger = """
             CREATE TRIGGER IF NOT EXISTS users_insert
             AFTER INSERT ON users
             BEGIN
@@ -101,7 +101,7 @@ public class DBUtil {
             usersStatement.execute(createUsers);
             usersStatement.execute(createDifficultyLevels);
             usersStatement.execute(createStatistics);
-            usersStatement.execute(createTrigger);
+            usersStatement.execute(createInsertUserTrigger);
             
             insertDifficultyLevel("EASY");
             insertDifficultyLevel("MEDIUM");
@@ -161,6 +161,57 @@ public class DBUtil {
             prepStmt.execute();
         } catch (SQLException e) {
             System.err.println("Error while insert user");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean insertStatistics(String username, String password) {
+        try {
+            PreparedStatement prepStmt = userConnection.prepareStatement("""
+                INSERT OR IGNORE INTO users
+                VALUES (NULL, ?, ?);
+            """);
+            prepStmt.setString(1, username);
+            prepStmt.setString(2, password);
+            prepStmt.execute();
+        } catch (SQLException e) {
+            System.err.println("Error while insert user");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean increaseStatistics(int userID, String difficultyLevel, int numberOfShots, int numberOfHits, boolean win) {
+        difficultyLevel = difficultyLevel.toUpperCase();
+        String numberOfWins = "0", numberOfLosts = "0";
+        if (win) {
+            numberOfWins = "1";
+        } else {
+            numberOfLosts = "1";
+        }
+        try {
+            PreparedStatement prepStmt = statisticsConnection.prepareStatement("""
+                UPDATE statistics
+                SET number_of_games = number_of_games + 1,
+                    number_of_wins = number_of_wins + ?,
+                    number_of_losts = number_of_losts + ?,
+                    number_of_shots = number_of_shots + ?,
+                    number_of_hits = number_of_hits + ?
+                WHERE   user_id = ?
+                    AND difficulty_level = ?;
+            """);
+            prepStmt.setString(1, numberOfWins);
+            prepStmt.setString(2, numberOfLosts);
+            prepStmt.setString(3, String.valueOf(numberOfShots));
+            prepStmt.setString(4, String.valueOf(numberOfHits));
+            prepStmt.setString(5, String.valueOf(userID));
+            prepStmt.setString(6, difficultyLevel);
+            prepStmt.execute();
+        } catch (SQLException e) {
+            System.err.println("Error while updating statistics");
             e.printStackTrace();
             return false;
         }
@@ -228,7 +279,7 @@ public class DBUtil {
                 numberOfGames = result.getInt("number_of_games");
                 numberOfWins = result.getInt("number_of_wins");
                 numberOfLosts = result.getInt("number_of_losts");
-                numberOfShoots = result.getInt("number_of_shoots");
+                numberOfShoots = result.getInt("number_of_shots");
                 numberOfHits = result.getInt("number_of_hits");
 
                 statistics = new Statistics(difficultyLevel, numberOfGames, numberOfWins, numberOfLosts, numberOfShoots, numberOfHits);

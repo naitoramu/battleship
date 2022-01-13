@@ -18,7 +18,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.*;
 
-
 public class GameController {
     @FXML
     AnchorPane anchorPane;
@@ -31,6 +30,14 @@ public class GameController {
     @FXML
     Rectangle rectangleFieldB;
     @FXML
+    Button backButton;
+    @FXML
+    Button exitButton;
+    @FXML
+    Label playerOneBoardLabel;
+    @FXML
+    Label playerTwoBoardLabel;
+    @FXML
     Button playerOneReadyButton;
     @FXML
     Button playerTwoReadyButton;
@@ -40,6 +47,8 @@ public class GameController {
     Button playerTwoAutoPosition;
     @FXML
     Label gameStatus;
+
+    CSVDictReader dictionary = Main.getDictionary();
 
     Player playerOne;
     Player playerTwo;
@@ -59,8 +68,7 @@ public class GameController {
 
     GameRecorder recorder;
 
-
-    List<Short> shipsLengths = Arrays.asList(new Short[]{4, 3, 3, 2, 2, 2, 1, 1, 1, 1});
+    List<Short> shipsLengths = Arrays.asList(new Short[] { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 });
     int maxPoints = 20;
 
     int cursor = 0;
@@ -68,12 +76,16 @@ public class GameController {
 
     @FXML
     void initialize() {
+
+        labelingButtonsAndLabels();
+
         setPlayers(
-                new Player(!Main.isPlayerOneIsHuman(), this, Main.isPlayerOneIsHuman() ? Main.getPlayerOne().getId() : 0),
-                new Player(!Main.isPlayerTwoIsHuman(), this, Main.isPlayerTwoIsHuman() ? Main.getPlayerTwo().getId() : 1)
-        );
-        if(playerOne.isAI()){
-            switch (Main.getPlayerOneDifficultyLevel().getName()){
+                new Player(!Main.isPlayerOneIsHuman(), this,
+                        Main.isPlayerOneIsHuman() ? Main.getPlayerOne().getId() : 0),
+                new Player(!Main.isPlayerTwoIsHuman(), this,
+                        Main.isPlayerTwoIsHuman() ? Main.getPlayerTwo().getId() : 1));
+        if (playerOne.isAI()) {
+            switch (Main.getPlayerOneDifficultyLevel().getName()) {
                 case "easy":
                     playerOne.setDiffLvl(1);
                     break;
@@ -84,10 +96,10 @@ public class GameController {
                     playerOne.setDiffLvl(3);
                     break;
             }
-            //System.out.println(  Main.getPlayerOneDifficultyLevel().getName());
+            // System.out.println( Main.getPlayerOneDifficultyLevel().getName());
         }
-        if(playerTwo.isAI()){
-            switch (Main.getPlayerTwoDifficultyLevel().getName()){
+        if (playerTwo.isAI()) {
+            switch (Main.getPlayerTwoDifficultyLevel().getName()) {
                 case "easy":
                     playerTwo.setDiffLvl(1);
                     break;
@@ -98,18 +110,37 @@ public class GameController {
                     playerTwo.setDiffLvl(3);
                     break;
             }
-            //System.out.println( Main.getPlayerTwoDifficultyLevel().getName());
+            // System.out.println( Main.getPlayerTwoDifficultyLevel().getName());
         }
         startGame();
     }
 
+    private void labelingButtonsAndLabels() {
+        backButton.setText(dictionary.getLabelByName("back").get(Main.getInterfaceLanguage()));
+        exitButton.setText(dictionary.getLabelByName("exit").get(Main.getInterfaceLanguage()));
+        playerOneReadyButton.setText(dictionary.getLabelByName("ready").get(Main.getInterfaceLanguage()));
+        playerTwoReadyButton.setText(dictionary.getLabelByName("ready").get(Main.getInterfaceLanguage()));
+        playerOneAutoPosition.setText(dictionary.getLabelByName("auto-position").get(Main.getInterfaceLanguage()));
+        playerTwoAutoPosition.setText(dictionary.getLabelByName("auto-position").get(Main.getInterfaceLanguage()));
+
+        playerOneBoardLabel.setText(dictionary.getLabelByName("player-board").get(Main.getInterfaceLanguage()) + Main.getPlayerOne().getUsername());
+        playerTwoBoardLabel.setText(dictionary.getLabelByName("player-board").get(Main.getInterfaceLanguage()) + Main.getPlayerTwo().getUsername());
+    }
+
     private void refreshGameStatus() {
+
+        String player = dictionary.getLabelByName("player").get(Main.getInterfaceLanguage());
+        String wins = dictionary.getLabelByName("wins").get(Main.getInterfaceLanguage());
+        String turn = dictionary.getLabelByName("turn").get(Main.getInterfaceLanguage());
+        String placeShips = dictionary.getLabelByName("place-ships").get(Main.getInterfaceLanguage()).toLowerCase();
+        String chooseAreaToHit = dictionary.getLabelByName("choose-area").get(Main.getInterfaceLanguage()).toLowerCase();
+
         String gameInfo;
         if (isGameFinished) {
-            gameInfo = "Player " + (currentPlayer == playerOne ? "1 " : "2 ") + "wins";
+            gameInfo = player + " " + (currentPlayer == playerOne ? Main.getPlayerOne().getUsername() : Main.getPlayerTwo().getUsername()) + " " + wins;
         } else {
-            gameInfo = "Player " + (currentPlayer == playerOne ? "1 turn - " : "2 turn - ") +
-                    (isSetup ? "place your ships" : "choose area to hit");
+            gameInfo = turn + ": " + player + " " + (currentPlayer == playerOne ? Main.getPlayerOne().getUsername() : Main.getPlayerTwo().getUsername()) + " - " +
+                    (isSetup ? placeShips : chooseAreaToHit);
 
         }
         gameStatus.setText(gameInfo);
@@ -126,10 +157,11 @@ public class GameController {
         refreshGameStatus();
         if (currentPlayer.isAI() && !isGameFinished) {
             if (isSetup) {
-                ai.placeShips(currentPlayer.getBoard(), shipsLengths, (currentPlayer == playerOne ? playerTwo : playerOne).isAI());
+                ai.placeShips(currentPlayer.getBoard(), shipsLengths,
+                        (currentPlayer == playerOne ? playerTwo : playerOne).isAI());
                 isEveryShipPlaced = true;
             } else {
-                ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas(),currentPlayer);
+                ai.shoot((currentPlayer == playerOne ? playerTwo : playerOne).getBoard().getAreas(), currentPlayer);
             }
         }
     }
@@ -139,6 +171,7 @@ public class GameController {
         isGameFinished = true;
         refreshGameStatus();
         recorder.save();
+        updateUsersStatistics();
         showReplayAlert();
     }
 
@@ -146,9 +179,13 @@ public class GameController {
         if (clickedArea.getOwner() != currentPlayer && !clickedArea.wasHit()) {
             recorder.recordShot(clickedArea);
             clickedArea.setHit();
+            currentPlayer.addShot();
             if (clickedArea.getState() == Area.State.SHIP) {
                 currentPlayer.addPoint();
+                currentPlayer.addHit();
                 if (currentPlayer.getScore() == maxPoints) {
+                    System.out.println("PlayerOne: " + playerOne.getHitsCount() + '/' + playerOne.getShotsCount());
+                    System.out.println("PlayerTwo: " + playerTwo.getHitsCount() + '/' + playerTwo.getShotsCount());
                     handleGameFinish();
                     return;
                 }
@@ -187,13 +224,15 @@ public class GameController {
     public EventHandler<MouseEvent> areaHoverHandler = e -> {
         Area recClicked = (Area) e.getSource();
         if (isSetup) {
-            if (!isEveryShipPlaced && currentPlayer == recClicked.getOwner()) drawShipGhost(recClicked);
+            if (!isEveryShipPlaced && currentPlayer == recClicked.getOwner())
+                drawShipGhost(recClicked);
         }
     };
 
     public void placeShip(Area recClicked) {
         if (!isEveryShipPlaced && currentPlayer == recClicked.getOwner()) {
-            ShipPlacement shipPlacement = currentPlayer.getBoard().getShipsAreas(recClicked, isShipDirectionHorizontal, shipsLengths.get(cursor));
+            ShipPlacement shipPlacement = currentPlayer.getBoard().getShipsAreas(recClicked, isShipDirectionHorizontal,
+                    shipsLengths.get(cursor));
 
             if (!shipPlacement.isPossible()) {
                 System.out.println("Place your ship elsewhere");
@@ -223,7 +262,6 @@ public class GameController {
         }
     }
 
-
     public void clearGhosts() {
         for (Area area : currentPlayer.getBoard().getAreas().values()) {
             area.setHighlited(false);
@@ -231,7 +269,8 @@ public class GameController {
     }
 
     public void drawShipGhost(Area areaClicked) {
-        List<Area> areasToPaint = currentPlayer.getBoard().getShipsAreas(areaClicked, isShipDirectionHorizontal, shipsLengths.get(cursor)).getAreas();
+        List<Area> areasToPaint = currentPlayer.getBoard()
+                .getShipsAreas(areaClicked, isShipDirectionHorizontal, shipsLengths.get(cursor)).getAreas();
         clearGhosts();
         for (Area rec : areasToPaint) {
             rec.setHighlited(true);
@@ -239,7 +278,7 @@ public class GameController {
     }
 
     public void startGame() {
-        //printMatrixOfNames();
+        // printMatrixOfNames();
         recorder = new GameRecorder(playerOne, playerTwo);
         playerTwoReadyButton.setVisible(false);
         playerTwoAutoPosition.setVisible(false);
@@ -265,7 +304,7 @@ public class GameController {
     public void printMatrixOfNames() {
         System.out.println("********************************");
         System.out.println("printMatrixOfNames");
-        System.out.println("********************************");
+        System.out.println("************************* *******");
 
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
@@ -274,7 +313,6 @@ public class GameController {
             System.out.println();
         }
     }
-
 
     public void printStorageAsStates() {
         System.out.println("********************************");
@@ -285,7 +323,8 @@ public class GameController {
         int i = 0;
         while (i < currentPlayer.getBoard().getAreas().size()) {
             System.out.print(currentPlayer.getBoard().getAreas().get(i).getState() + "\t");
-            if ((i + 1) % 10 == 0) System.out.println();
+            if ((i + 1) % 10 == 0)
+                System.out.println();
             i += 1;
         }
     }
@@ -327,7 +366,8 @@ public class GameController {
     public void recordCurrentPlayerBoard() {
         ArrayList<Coordinates> occupiedAreas = new ArrayList<>();
         for (Area area : currentPlayer.getBoard().getAreas().values()) {
-            if (area.getState() == Area.State.SHIP) occupiedAreas.add(area.getCoordinates());
+            if (area.getState() == Area.State.SHIP)
+                occupiedAreas.add(area.getCoordinates());
         }
         if (currentPlayer == playerOne) {
             recorder.setPlayerOneShipsCoordinates(occupiedAreas);
@@ -351,7 +391,8 @@ public class GameController {
             Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/mainMenuView.fxml"));
             Scene scene = new Scene(newRoot);
             Stage stageTheButtonBelongs = (Stage) anchorPane.getScene().getWindow();
-            scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/mainMenu.css").toExternalForm());
+            scene.getStylesheets()
+                    .add(getClass().getResource("/battleship/view/stylesheet/mainMenu.css").toExternalForm());
             stageTheButtonBelongs.setScene(scene);
         } catch (IOException e) {
             justExit();
@@ -360,6 +401,26 @@ public class GameController {
 
     public void justExit() {
         Platform.exit();
+    }
+
+    private void updateUsersStatistics() {
+        boolean playerOneWon;
+        if(currentPlayer == playerOne) {
+            playerOneWon = true;
+        } else {
+            playerOneWon = false;
+        }
+
+        if (Main.isPlayerOneIsHuman()) {
+            Main.getDB().increaseStatistics(Main.getPlayerOne().getId(), Main.getPlayerTwoDifficultyLevel().getName(), playerOne.getShotsCount(), playerOne.getHitsCount(), playerOneWon);
+        } else {
+            Main.getDB().increaseStatistics(Main.getPlayerOne().getId(), Main.getPlayerOneDifficultyLevel().getName(), playerOne.getShotsCount(), playerOne.getHitsCount(), playerOneWon);
+        }
+
+        Main.getDB().increaseStatistics(Main.getPlayerTwo().getId(), Main.getPlayerTwoDifficultyLevel().getName(), playerTwo.getShotsCount(), playerTwo.getHitsCount(), !playerOneWon);
+
+        System.out.println("Statistics updatd succesfully");
+
     }
 
     public void showReplayAlert() {

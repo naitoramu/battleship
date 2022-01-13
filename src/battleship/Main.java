@@ -87,6 +87,15 @@ public class Main extends Application {
         return users;
     }
 
+    public static User getUserByUsername(String username) {
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
     public static void setUsers(List<User> users) {
         Main.users = users;
     }
@@ -159,6 +168,10 @@ public class Main extends Application {
         Main.playerTwo = playerTwo;
     }
 
+    public static void setPlayerTwoAsComputer() {
+        Main.playerTwo = getUserByUsername("COMPUTER");
+    }
+
     public static DifficultyLevel getPlayerTwoDifficultyLevel() {
         return playerTwoDifficultyLevel;
     }
@@ -173,6 +186,10 @@ public class Main extends Application {
 
     public static void setPlayerOne(User playerOne) {
         Main.playerOne = playerOne;
+    }
+
+    public static void setPlayerOneAsComputer() {
+        Main.playerOne = getUserByUsername("COMPUTER");
     }
 
     public static DifficultyLevel getPlayerOneDifficultyLevel() {

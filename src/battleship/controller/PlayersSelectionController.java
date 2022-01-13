@@ -136,6 +136,8 @@ public class PlayersSelectionController {
 
     private void initializePlayerOneAsComputer() throws FileNotFoundException {
 
+        Main.setPlayerOneAsComputer();
+
         playerOneImageView.setImage(loadAvatar(ROOT_PATH + "/src/battleship/avatar/computer-avatar.png"));
         playerOneUsernameLabel.setText(dictionary.getLabelByName("computer").get(Main.getInterfaceLanguage()));
 
@@ -145,6 +147,8 @@ public class PlayersSelectionController {
     }
 
     private void initializePlayerTwoAsComputer() throws FileNotFoundException {
+
+        Main.setPlayerTwoAsComputer();
 
         playerTwoImageView.setImage(loadAvatar(ROOT_PATH + "/src/battleship/avatar/computer-avatar.png"));
         playerTwoUsernameLabel.setText(dictionary.getLabelByName("computer").get(Main.getInterfaceLanguage()));

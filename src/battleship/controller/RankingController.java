@@ -42,6 +42,7 @@ public class RankingController {
 
     public RankingController() throws IOException {
         this.dictionary = Main.getDictionary();
+        Main.loadDataFromDatabase();
     }
 
     @FXML

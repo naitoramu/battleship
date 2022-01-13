@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleship.controller.GameController">
+<StackPane fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleship.controller.GameController">
    <children>
       <AnchorPane fx:id="anchorPane" />
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
@@ -22,17 +22,17 @@
                <children>
                   <StackPane alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Button fx:id="go_to_menu" mnemonicParsing="false" onAction="#go_to_menu" prefHeight="26.0" prefWidth="120.0" text="Back" />
+                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#go_to_menu" prefHeight="26.0" prefWidth="120.0" text="Back" />
                      </children>
                   </StackPane>
-                  <StackPane prefHeight="130.0" prefWidth="490.0" HBox.hgrow="ALWAYS">
+                  <StackPane prefHeight="130.0" prefWidth="850.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Label fx:id="gameStatus" alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="266.0" textAlignment="CENTER" />
+                        <Label fx:id="gameStatus" alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER" />
                      </children>
                   </StackPane>
                   <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#justExit" prefHeight="26.0" prefWidth="120.0" text="Exit" />
+                        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#justExit" prefHeight="26.0" prefWidth="120.0" text="Exit" />
                      </children>
                   </StackPane>
                </children>
@@ -43,7 +43,7 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                            <children>
-                              <Label text="Label_GRACZ_A" />
+                              <Label fx:id="playerOneBoardLabel" text="Label_GRACZ_A" />
                               <AnchorPane fx:id="playerOnePane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="380.0" prefWidth="380.0" VBox.vgrow="NEVER">
                                  <children>
                                     <Rectangle fx:id="rectangleFieldA" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="380.0" stroke="BLACK" strokeType="INSIDE" width="380.0" />
@@ -187,7 +187,7 @@
                                     </GridPane>
                                  </children>
                               </AnchorPane>
-                              <Button fx:id="playerOneReadyButton" mnemonicParsing="false" onAction="#playerReady" prefHeight="26.0" prefWidth="118.0" text="I'm ready" />
+                              <Button fx:id="playerOneReadyButton" mnemonicParsing="false" onAction="#playerReady" text="I'm ready" />
                               <Button fx:id="playerOneAutoPosition" mnemonicParsing="false" onAction="#autoPosition" text="Auto position ships" />
                            </children>
                         </VBox>
@@ -197,7 +197,7 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                            <children>
-                              <Label text="Label_GRACZ_B" />
+                              <Label fx:id="playerTwoBoardLabel" text="Label_GRACZ_B" />
                               <AnchorPane fx:id="playerTwoPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="380.0" prefWidth="380.0">
                                  <children>
                                     <Rectangle fx:id="rectangleFieldB" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="380.0" stroke="BLACK" strokeType="INSIDE" width="380.0" />
@@ -341,8 +341,8 @@
                                     </GridPane>
                                  </children>
                               </AnchorPane>
-                              <Button fx:id="playerTwoReadyButton" mnemonicParsing="false" onAction="#playerReady" prefHeight="26.0" prefWidth="118.0" text="I'm ready" />
-                              <Button fx:id="playerTwoAutoPosition" mnemonicParsing="false" onAction="#autoPosition" prefHeight="26.0" prefWidth="118.0" text="Auto position ships" />
+                              <Button fx:id="playerTwoReadyButton" mnemonicParsing="false" onAction="#playerReady" text="I'm ready" />
+                              <Button fx:id="playerTwoAutoPosition" mnemonicParsing="false" onAction="#autoPosition" text="Auto position ships" />
                            </children>
                         </VBox>
                      </children>

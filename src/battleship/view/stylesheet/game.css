@@ -1,3 +1,42 @@
+@font-face {
+    src: url("font/VT323-Regular.ttf");
+}
+
+#container {
+    -fx-background-color: linear-gradient(to bottom, #0d7ee0, #82c5ff);
+    -fx-font-family: "VT323";
+}
+
+#gameStatus {
+    -fx-text-fill: white;
+    -fx-font-size: 48px;
+}
+
+#gameStatus .text {
+    -fx-stroke-width: 2px;
+    -fx-stroke: black;
+}
+
+Label {
+    -fx-font-size:32px;
+}
+
+Button {
+    -fx-background-color: linear-gradient(to bottom, #0d7ee0, #82c5ff);
+    -fx-text-fill: linear-gradient(to bottom, #2e3e69, #1e2c3f);
+    -fx-font-size: 32px;
+    -fx-border-radius: 6px;
+    -fx-border-width: 3px;
+    -fx-border-color: linear-gradient(to bottom, #2e3e69, #1e2c3f);
+    -fx-background-insets: 1px;
+}
+
+Button:hover {
+    -fx-background-color: linear-gradient(to top, #0d7ee0, #82c5ff);
+    -fx-text-fill: black;
+    -fx-border-color: black;
+}
+
 Area {
     -fx-stroke: black;
 }
