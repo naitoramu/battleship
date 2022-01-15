@@ -219,6 +219,7 @@ public class MainMenuController {
         Parent newRoot = FXMLLoader.load(getClass().getResource("/battleship/view/replayListView.fxml"));
         Scene scene = new Scene(newRoot);
         Stage stageTheButtonBelongs = (Stage) btn.getScene().getWindow();
+        scene.getStylesheets().add(getClass().getResource("/battleship/view/stylesheet/replayList.css").toExternalForm());
         stageTheButtonBelongs.setScene(scene);
     }
 

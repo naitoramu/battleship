@@ -22,17 +22,17 @@
                <children>
                   <StackPane alignment="CENTER_LEFT" prefHeight="150.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#go_to_menu" prefHeight="26.0" prefWidth="120.0" text="Back" />
+                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#go_to_menu" text="Back" />
                      </children>
                   </StackPane>
-                  <StackPane prefHeight="130.0" prefWidth="850.0" HBox.hgrow="ALWAYS">
+                  <StackPane prefHeight="130.0" prefWidth="840.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="gameStatus" alignment="CENTER" contentDisplay="CENTER" textAlignment="CENTER" />
                      </children>
                   </StackPane>
                   <StackPane alignment="CENTER_RIGHT" prefHeight="150.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#justExit" prefHeight="26.0" prefWidth="120.0" text="Exit" />
+                        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#justExit" text="Exit" />
                      </children>
                   </StackPane>
                </children>

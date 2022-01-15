@@ -58,7 +58,7 @@ public class GameRecorder implements Serializable {
 
     public void save() {
         try {
-            File file = new File("saved_games/" + dateFormat.format(new Date()) + ".bs");
+            File file = new File(Main.getRootPath() + "/src/battleship/saved_games/" + dateFormat.format(new Date()) + ".bs");
             file.createNewFile();
             FileOutputStream fileOut = new FileOutputStream(file);
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
@@ -71,7 +71,7 @@ public class GameRecorder implements Serializable {
     }
 
     public static ArrayList<GameRecorder> readAll() {
-        File folder = new File("saved_games");
+        File folder = new File(Main.getRootPath() + "/src/battleship/saved_games");
         System.out.println(folder.getAbsolutePath());
         ArrayList<GameRecorder> records = new ArrayList<>();
         for (File file : folder.listFiles()) {

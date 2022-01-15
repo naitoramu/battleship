@@ -14,11 +14,21 @@
          <children>
             <HBox alignment="CENTER" prefHeight="223.0" prefWidth="1280.0">
                <children>
-                  <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonPressed" prefHeight="60.0" prefWidth="230.0" text="Button" />
-                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="myAccountLabel" text="My Profile" />
-                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="changePasswdButton" mnemonicParsing="false" onAction="#changePasswdButtonPressed" prefHeight="60.0" prefWidth="230.0" text="Button" />
+                  <StackPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#backButtonPressed" text="Button" />
+                     </children>
+                  </StackPane>
+                  <StackPane HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="myAccountLabel" text="My Profile" />
+                     </children>
+                  </StackPane>
+                  <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="changePasswdButton" mnemonicParsing="false" onAction="#changePasswdButtonPressed" text="Button" />
+                     </children>
+                  </StackPane>
                </children>
             </HBox>
             <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />

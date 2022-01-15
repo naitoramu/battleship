@@ -39,6 +39,16 @@ public class ReplayController {
     Rectangle rectangleFieldB;
     @FXML
     Button startReplay;
+    @FXML
+    Button backButton;
+    @FXML
+    Button exitButton;
+    @FXML
+    Label playerOneBoardLabel;
+    @FXML
+    Label playerTwoBoardLabel;
+
+    CSVDictReader dictionary = Main.getDictionary();
 
     Board playerOneBoard;
     Board playerTwoBoard;
@@ -49,6 +59,8 @@ public class ReplayController {
     Timeline timeline;
 
     public void prepareReplay(GameRecorder recorder) {
+        labelingButtonsAndLabels();
+
         playerOneId = recorder.getPlayerOneId();
         playerTwoId = recorder.getPlayerTwoId();
 
@@ -69,6 +81,15 @@ public class ReplayController {
             final int index = i;
             timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(i + 1), e -> shoot(recorder.getRecords().get(index))));
         }
+    }
+
+    private void labelingButtonsAndLabels() {
+        backButton.setText(dictionary.getLabelByName("back").get(Main.getInterfaceLanguage()));
+        exitButton.setText(dictionary.getLabelByName("exit").get(Main.getInterfaceLanguage()));
+        startReplay.setText(dictionary.getLabelByName("start-replay").get(Main.getInterfaceLanguage()));
+
+        playerOneBoardLabel.setText(dictionary.getLabelByName("player-board").get(Main.getInterfaceLanguage()) + 1);
+        playerTwoBoardLabel.setText(dictionary.getLabelByName("player-board").get(Main.getInterfaceLanguage()) + 2);
     }
 
     public void shoot(ShotRecord shot) {

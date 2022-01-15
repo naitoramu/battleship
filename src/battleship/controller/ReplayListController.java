@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -37,10 +38,20 @@ public class ReplayListController {
     TableColumn<GameRecordTableRow, String> winnerColumn;
     @FXML
     TableColumn<GameRecordTableRow, Integer> movesColumn;
+    @FXML
+    Label titleLabel;
+    @FXML
+    Label hintLabel;
+    @FXML
+    Button backButton;
+
+    CSVDictReader dictionary = Main.getDictionary();
 
 
     @FXML
     void initialize() {
+        labelingButtonsAndLabels();
+        
         table.setRowFactory(tv -> {
             TableRow<GameRecordTableRow> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -61,6 +72,13 @@ public class ReplayListController {
         for (GameRecorder record : GameRecorder.readAll()) {
             table.getItems().add(new GameRecordTableRow(record));
         }
+    }
+
+    private void labelingButtonsAndLabels() {
+        backButton.setText(dictionary.getLabelByName("back").get(Main.getInterfaceLanguage()));
+        titleLabel.setText(dictionary.getLabelByName("played-games").get(Main.getInterfaceLanguage()));
+        hintLabel.setText(dictionary.getLabelByName("show-replay-hint").get(Main.getInterfaceLanguage()));
+
     }
 
     public void backToMainMenu() {
